@@ -282,8 +282,7 @@ class Cliente(models.Model):
     class Meta: 
         verbose_name = 'cliente'
         verbose_name_plural = 'clientes'
-    def __str__(self):
-        return f"{self.cod_cliente}"
+    
 
 
 
@@ -409,8 +408,7 @@ class Venta(models.Model):
         producto = self.cod_producto
         producto.cantidad_productos -= self.cantidad_productos
         producto.save()
-    def __str__(self):
-        return f"{self.idventa}"
+  
 
 
 
