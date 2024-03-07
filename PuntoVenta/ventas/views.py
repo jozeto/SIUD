@@ -1,3 +1,4 @@
+from telnetlib import LOGOUT
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 from .models import *
@@ -5,7 +6,8 @@ from .forms import *
 from django.contrib import messages
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from datetime import datetime
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
 # Create your views here.
@@ -17,12 +19,25 @@ def ventas_vista(request):
     }
     return render(request, 'ventas.html', context) # aca de coloca el template "el que finaliza en html"
 """
+@login_required
+def home(request):
+    return render(request,"home.html")
 
+@login_required
+def login(request):
+    return(render(request,'registration/login.html' ))
+    
+def exit(request):
+    logout(request)
+    return redirect('login')
 
 
 #--------------------------CLIENTES -----------------------
 
 def clientes_vista(request):
+    if not request.user.is_staff:
+        return render(request,"home.html")
+    
     clientes = Cliente.objects.all()
     personas = Persona.objects.all()
     tiposcomercio = TipoComercio.objects.all()
@@ -130,6 +145,8 @@ def eliminar_Cliente_vista(request):
 #---------------------------- EMPLEADOS ---------------
 
 def empleados_vista(request):
+    if not request.user.is_staff:
+        return render(request,"home.html")
     empleados = Empleado.objects.all()
     personas = Persona.objects.all()
     cargoempleado = CargoEmpleado.objects.all()
@@ -262,6 +279,7 @@ def eliminar_Empleado_vista(request):
 #------------- PRODUCTOS -------------------
 
 def productos_vista(request):
+    
     producto = Producto.objects.all()
     talla = Talla.objects.all()
     categoriaproducto = CategoriaProducto.objects.all()
@@ -435,6 +453,8 @@ def eliminar_Venta_vista(request):
 # --------------NOVEDADES PERSONAL -----------------
 
 def novedad_Empleado_vista(request):
+    if not request.user.is_staff:
+        return render(request,"home.html")
     novedadpersonal = Novedadpersonal.objects.all()
     tiponovedad = Tiponovedadpersonal.objects.all()
     empleado = Empleado.objects.all()
@@ -480,6 +500,8 @@ def eliminar_Novedad_Empleado_vista(request):
 # --------------PQRS -----------------
 
 def pqrs_vista(request):
+    if not request.user.is_staff:
+        return render(request,"home.html")
     pqrs = Pqr.objects.all()
     tipopqrs = TipoPQR.objects.all()
     estadopqrs = EstadoPQR.objects.all()

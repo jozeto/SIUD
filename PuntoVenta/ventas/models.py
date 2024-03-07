@@ -11,6 +11,8 @@ class RolUsuario(models.Model):
     class Meta:
         verbose_name = 'roldeusuario'
         verbose_name_plural = 'rolesusuario'
+    def __str__(self):
+        return f"{self.nombre_rol}"
 
 
     
@@ -21,6 +23,8 @@ class Arl(models.Model):
     class Meta:
         verbose_name = 'ARL'
         verbose_name_plural = 'ARLS'
+    def __str__(self):
+        return f"{self.arl}"
 
 
 
@@ -31,7 +35,8 @@ class Eps(models.Model):
     class Meta: 
         verbose_name = 'EPS'
         verbose_name_plural = 'EPSS'
-
+def __str__(self):
+        return f"{self.eps}"
 
 
 class FondoPension(models.Model):
@@ -41,6 +46,8 @@ class FondoPension(models.Model):
     class Meta: 
         verbose_name = 'fondopension'
         verbose_name_plural = 'fondospension'
+    def __str__(self):
+        return f"{self.fondo_pension}"
 
 
 class CargoEmpleado(models.Model):
@@ -50,6 +57,8 @@ class CargoEmpleado(models.Model):
     class Meta: 
         verbose_name = 'cargoempleado'
         verbose_name_plural = 'cargosempleados'
+    def __str__(self):
+        return f"{self.cargo_empleado}"
 
 
 class CategoriaProducto(models.Model):
@@ -59,6 +68,8 @@ class CategoriaProducto(models.Model):
     class Meta: 
         verbose_name = 'categoriaproducto'
         verbose_name_plural = 'categoriasproducto'
+    def __str__(self):
+        return f"{self.categoria_producto}"
 
 
 
@@ -69,6 +80,8 @@ class Ciudad(models.Model):
     class Meta: 
         verbose_name = 'Ciudad'
         verbose_name_plural = 'Ciudades'
+    def __str__(self):
+        return f"{self.ciudad}"
 
 
 
@@ -79,6 +92,8 @@ class TipoCliente(models.Model):
     class Meta: 
         verbose_name = 'tipocliente'
         verbose_name_plural = 'tiposcliente'
+    def __str__(self):
+        return f"{self.tipo_cliente}"
 
 
 
@@ -89,6 +104,8 @@ class TipoComercio(models.Model):
     class Meta: 
         verbose_name = 'tipocomercio'
         verbose_name_plural = 'tiposcomercio'
+    def __str__(self):
+        return f"{self.tipo_comercio}"
 
 
 class EstadoComprobante(models.Model):
@@ -98,6 +115,8 @@ class EstadoComprobante(models.Model):
     class Meta: 
         verbose_name = 'estadocomprobante'
         verbose_name_plural = 'estadoscomprobante'
+    def __str__(self):
+        return f"{self.estado_comprobante}"
 
 
 class EstadoPQR(models.Model):
@@ -107,6 +126,8 @@ class EstadoPQR(models.Model):
     class Meta: 
         verbose_name = 'estadopqr'
         verbose_name_plural = 'estadospqr'
+    def __str__(self):
+        return f"{self.estado_pqr}"
 
 
 
@@ -117,6 +138,8 @@ class FormaPago(models.Model):
     class Meta: 
         verbose_name = 'formapago'
         verbose_name_plural = 'formapago'
+    def __str__(self):
+        return f"{self.forma_pago}"
 
 
 
@@ -127,6 +150,8 @@ class Tipomovimiento(models.Model):
     class Meta: 
         verbose_name = 'tipomovimiento'
         verbose_name_plural = 'tiposmovimiento'
+    def __str__(self):
+        return f"{self.tipo_movimiento}"
 
 
 class Tiponovedadpersonal(models.Model):
@@ -136,6 +161,8 @@ class Tiponovedadpersonal(models.Model):
     class Meta: 
         verbose_name = 'tiponovedadpersonal'
         verbose_name_plural = 'tiposnovedadpersonal'
+    def __str__(self):
+        return f"{self.novedad_personal}"
 
 
 
@@ -146,7 +173,8 @@ class Tiponovedadproducto(models.Model):
     class Meta: 
         verbose_name = 'Tiponovedadproducto'
         verbose_name_plural = 'Tiposnovedadproducto'
-
+    def __str__(self):
+        return f"{self.novedad_producto}"
 
 
 class TipoPQR(models.Model):
@@ -156,6 +184,8 @@ class TipoPQR(models.Model):
     class Meta: 
         verbose_name = 'Tipopqr'
         verbose_name_plural = 'Tipospqr'
+    def __str__(self):
+        return f"{self.tipo_pqr}"
 
 
 
@@ -166,6 +196,8 @@ class Ubicacioninventario(models.Model):
     class Meta: 
         verbose_name = 'ubicacioninventario'
         verbose_name_plural = 'ubicacionesnventario'
+    def __str__(self):
+        return f"{self.ubicacion_inventario}"
 
 
 class Talla(models.Model):
@@ -175,6 +207,8 @@ class Talla(models.Model):
     class Meta: 
         verbose_name = 'talla'
         verbose_name_plural = 'tallas'
+    def __str__(self):
+        return f"{self.talla}"
 
 
 class Contacto(models.Model):
@@ -185,6 +219,8 @@ class Contacto(models.Model):
     class Meta: 
         verbose_name = 'contacto'
         verbose_name_plural = 'contactos'
+    def __str__(self):
+        return f"{self.idcontacto} "
 
 
 
@@ -197,6 +233,8 @@ class Direccion(models.Model):
     class Meta: 
         verbose_name = 'direccion'
         verbose_name_plural = 'direcciones'
+    def __str__(self):
+        return f"{self.iddireccion}"
 
 
 
@@ -208,6 +246,8 @@ class Usuarioid(models.Model):
     class Meta: 
         verbose_name = 'usuarioID'
         verbose_name_plural = 'usuariosID'
+    def __str__(self):
+        return f"{self.idusuario}"
 
 
 
@@ -226,6 +266,8 @@ class Persona(models.Model):
     class Meta: 
         verbose_name = 'persona'
         verbose_name_plural = 'personas'
+    def __str__(self):
+        return f"{self.documentoidentidad}"
 
     
 class Cliente(models.Model):
@@ -240,6 +282,8 @@ class Cliente(models.Model):
     class Meta: 
         verbose_name = 'cliente'
         verbose_name_plural = 'clientes'
+    def __str__(self):
+        return f"{self.cod_cliente}"
 
 
 
@@ -262,6 +306,8 @@ class Empleado(models.Model):
     class Meta: 
         verbose_name = 'empleado'
         verbose_name_plural = 'empleados'
+    def __str__(self):
+        return f"{self.cod_empleado}"
 
 
 
@@ -280,6 +326,8 @@ class Producto(models.Model):
     class Meta: 
         verbose_name = 'producto'
         verbose_name_plural = 'productos'
+    def __str__(self):
+        return f"{self.cod_producto}"
 
 
 
@@ -296,6 +344,8 @@ class Novedadpersonal(models.Model):
     class Meta: 
         verbose_name = 'novedadpersonal'
         verbose_name_plural = 'novedadespersonal'
+    def __str__(self):
+        return f"{self.idnovedadpersonal}"
 
 
 
@@ -314,7 +364,8 @@ class Pqr(models.Model):
     class Meta: 
         verbose_name = 'PQR'
         verbose_name_plural = 'PQRS'
-
+    def __str__(self):
+        return f"{self.idpqr}"
 
 class Cotizacion(models.Model):
     idcotizacion = models.AutoField(primary_key=True)  
@@ -331,6 +382,8 @@ class Cotizacion(models.Model):
     class Meta: 
         verbose_name = 'cotizacion'
         verbose_name_plural = 'cotizaciones'
+    def __str__(self):
+        return f"{self.idcotizacion}"
 
 
 class Venta(models.Model):
@@ -356,6 +409,8 @@ class Venta(models.Model):
         producto = self.cod_producto
         producto.cantidad_productos -= self.cantidad_productos
         producto.save()
+    def __str__(self):
+        return f"{self.idventa}"
 
 
 
@@ -374,6 +429,8 @@ class Inventario(models.Model):
     class Meta: 
         verbose_name = 'inventario'
         verbose_name_plural = 'inventarios'
+    def __str__(self):
+        return f"{self.idinventario}"
 
 
 class Comprobanteventa(models.Model):
@@ -388,6 +445,8 @@ class Comprobanteventa(models.Model):
     class Meta: 
         verbose_name = 'compobanteventa'
         verbose_name_plural = 'comprobantesventa'
+    def __str__(self):
+        return f"{self.idcomprobante_venta}"
 
 
 class Novedadproducto(models.Model):
@@ -405,4 +464,6 @@ class Novedadproducto(models.Model):
     class Meta: 
         verbose_name = 'novedadproducto'
         verbose_name_plural = 'novedadesproducto'
+    def __str__(self):
+        return f"{self.idnovedad_producto}"
 

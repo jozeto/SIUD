@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<link rel="stylesheet" href="{% static 'css/iniciales.css' %}"> 
+<script src="{% static 'index/js/b4.js' %}"></script>
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="text-center"> {{ user.username | upper}}, Bienvenido a 
+            UP DENIM    <i class="fas fa-users"></i></h3> <! -- Es para cambiar el icono xd -- >
+       
+        </div>
+    </div>
+    <p class="mt20">{{ user.username | upper }}
+        {% if user.groups.exists %}
+            ({{ user.groups.first.name }})
+        {% else %}
+            (Sin grupo)
+        {% endif %}
+        </p>
+</div>
+<div class="contenido">
+<div class="hexagon-menu clear">
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/agregar_Venta/';">
+          <span class="hex-content-inner">
+              <span class="icon">
+                  <i class="fa fa-universal-access"></i>
+              </span>
+              
+              <span class="title">Ventas</span>
+          </span>
+          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path>
+          </svg>
+      </a>
+    </div>
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/inventarios/';">
+            <span class="hex-content-inner">
+                <span class="icon">
+                    <i class="fa fa-bullseye"></i>
+                </span>
+                <span class="title">Inventarios</span>
+            </span>
+            <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+        </a>
+    </div>
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/empleados/';">
+            <span class="hex-content-inner">
+                <span class="icon">
+                    <i class="fa fa-braille"></i>
+                </span>
+                <span class="title">Empleados</span>
+            </span>
+            <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+        </a>    
+    </div>
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/clientes/';">
+            <span class="hex-content-inner">
+                <span class="icon">
+                    <i class="fa fa-id-badge"></i>
+                </span>
+                <span class="title"> Clientes</span>
+            </span>
+            <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+        </a>
+    </div>
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/productos/';">
+            <span class="hex-content-inner">
+                <span class="icon">
+                    <i class="fa fa-life-ring"></i>
+                </span>
+                <span class="title">Productos</span>
+            </span>
+            <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+        </a>
+    </div>
+    <div class="hexagon-item">
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="hex-item">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a class="hex-content" onclick="window.location.href='/pqrs/';">
+            <span class="hex-content-inner">
+                <span class="icon">
+                    <i class="fa fa-clipboard"></i>
+                </span>
+                <span class="title">PQRS</span>
+            </span>
+            <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path></svg>
+        </a>
+    </div>
+    <div class="hexagon-item">
+      <div class="hex-item">
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <div class="hex-item">
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <a class="hex-content" href="{% url 'exit' %}">
+          <span class="hex-content-inner">
+              <span class="icon">
+                  <i class="fa fa-map-signs"></i>
+              </span>
+              
+              <span class="nav-link">Cerrar Sesión</span>
+          </span>
+          <svg viewBox="0 0 173.20508075688772 200" height="200" width="174" version="1.1" xmlns="http://www.w3.org/2000/svg">
+              <path d="M86.60254037844386 0L173.20508075688772 50L173.20508075688772 150L86.60254037844386 200L0 150L0 50Z" fill="#1e2530"></path>
+          </svg>
+      </a>
+  </div>
+  <style>
+    .contenido {
+        margin-top: 100px; /* Puedes ajustar este valor según sea necesario */
+    }
+</style>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}
