@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<script src="{% static 'index/js/b4.js' %}"></script>
+
+
+
+              
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-dark">Editar Inventario</h5>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                
+                <form method="POST"action="#" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+            </div>
+            
+
+            <div class="modal-footer bg-dark text-white">
+                <a href="{% url 'agregarInventario' %}" class="btn btn-danger">Volver</a>
+           
+            
+                <button type="submit" class="btn btn-success">
+                    Aceptar
+                </button>
+                </form>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% if messages %}
+{% for message in messages %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error...',
+        text: "{{message}}",
+    })
+</script>
+{% endfor %}
+{% endif %}
+{% endblock %}

@@ -8,6 +8,9 @@ from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from crispy_forms.helper import FormHelper
+from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
@@ -104,17 +107,95 @@ def agregar_Cliente_vista(request):
     return render(request, 'clientes.html', {'form': form})
 
 
-def editar_Cliente_vista(request):
-    if request.POST:
-        cliente = Cliente.objects.get(pk=request.POST.get('id_personal_editar'))
-        form = EditarClienteForm(
-            request.POST, request.FILES, instance=cliente)
-        if form.is_valid:
+
+def editarVenta(request, idventa):
+    venta = get_object_or_404(Venta, idventa=idventa)
+
+    if request.method == 'POST':
+        form = EditarVentaForm(request.POST, instance=venta)
+        if form.is_valid():
             form.save()
-    return redirect('Clientes')
-        
+            return redirect('agregarVenta')  # Reemplaza 'Clientes' con el nombre de la URL a la que quieres redirigir
+    else:
+        # Aquí asegúrate de que la instancia de la venta tenga la fecha de venta correcta
+        form = EditarVentaForm(instance=venta)
+        form.fields['fecha_venta'].initial = datetime.strftime(venta.fecha_venta, '%Y-%m-%d')
+
+    return render(request, 'editarVenta.html', {'form': form})
+
+def editarInventario(request, idinventario):
+    inventario = get_object_or_404(Inventario, idinventario=idinventario)
+
+    if request.method == 'POST':
+        form = EditarInventarioForm(request.POST, instance=inventario)
+        if form.is_valid():
+            form.save()
+            return redirect('agregarInventario')
+    else:
+        form = EditarInventarioForm(instance=inventario)
+
+    context = {
+        'form': form,
+        'inventario': inventario,
+    }
+    return render(request, 'editarInventario.html', context)
 
 
+
+
+def editar_Cliente_vista(request, cod_cliente):
+    cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
+    persona = cliente.iddocumento
+
+    if request.method == 'POST':
+        form_cliente = EditarClienteForm(request.POST, instance=cliente)
+        form_persona = EditarPersonaForm(request.POST, instance=persona)
+        if form_cliente.is_valid() and form_persona.is_valid():
+            form_cliente.save()
+            form_persona.save()
+            messages.success(request, "Cliente guardado exitosamente")
+            return redirect('Clientes')
+    else:
+        form_cliente = EditarClienteForm(instance=cliente)
+        form_persona = EditarPersonaForm(instance=persona)
+
+    form_cliente.helper = FormHelper()
+    form_cliente.helper.form_tag = False  # Evita que se genere la etiqueta <form> automáticamente
+    form_persona.helper = FormHelper()
+    form_persona.helper.form_tag = False
+
+    context = {
+        'form_cliente': form_cliente,
+        'form_persona': form_persona,
+        'cliente': cliente,
+    }
+    
+    return render(request, 'editarcliente.html', context)
+
+
+
+
+
+
+
+
+#def editar_Cliente_vista(request, cod_cliente):
+   # cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
+
+    #if request.method == 'POST':
+     #   form = EditarClienteForm(request.POST, instance=cliente)
+      #  if form.is_valid():
+       #     form.save()
+        #    return redirect('Clientes')
+    #else:
+     #   form = EditarClienteForm(instance=cliente)
+
+#    data = {
+ #       'form': form
+  #  }
+
+   # return render(request, 'clientes.html', data)
+###
 
 
 def eliminar_Cliente_vista(request):
@@ -419,7 +500,7 @@ def ventas_vista(request):
         'cliente' : cliente,
         'producto' : producto,
         'form_personal' : form_personal,
-  #      'form_editar' : form_editar,
+    #    'form_editar' : form_editar,
     }
 
     return render(request, 'ventas.html', context)
@@ -430,11 +511,16 @@ def agregar_Venta_vista(request):
         if form.is_valid():
             try:
                 form.save()
-            except:
-                messages(request,"error al guardar el producto")
-                return redirect('Ventas')
+                messages.success(request, "Venta registrada exitosamente.")
+            except Exception as e:
+                messages.error(request, f"Error al guardar la venta: {e}")
+        else:
+            messages.error(request, "No hay suficientes productos en el inventario.")
+    else:
+        form = AgregarVentaForm()
 
     return redirect('Ventas')
+
 
 def eliminar_Venta_vista(request):
     if request.method == 'POST':

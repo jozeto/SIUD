@@ -1,17 +1,19 @@
 from django.urls import path
 from . import views
-
+from .views import *
 
 
 urlpatterns = [
-    path('home/', views.home, name='home'),
+    path('home', views.home, name='home'),
 
 
     #----------- CLIENTES----------------
-    path('', views.ventas_vista, name='Ventas'),
+    path('Ventas', views.ventas_vista, name='Ventas'),
     path('clientes/', views.clientes_vista, name='Clientes'),
     path('agregar_Cliente/', views.agregar_Cliente_vista, name='agregarCliente'),
-    path('editar_Cliente/', views.editar_Cliente_vista, name='editarCliente'),
+    path('editar_Cliente/<int:cod_cliente>/', views.editar_Cliente_vista, name='editarCliente'),
+
+
     path('eiminar_Cliente/', views.eliminar_Cliente_vista, name='eliminarCliente'),
     #------EMPLEADO ----------
     path('empleados/', views.empleados_vista, name='Empleados'),
@@ -28,11 +30,13 @@ urlpatterns = [
    path('agregar_Inventario/', views.agregar_Inventario_vista, name='agregarInventario'),
    # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
    path('eiminar_Inventario/', views.eliminar_Inventario_vista, name='eliminarInventario'),
+   path('editarInventario/<int:idinventario>/', views.editarInventario, name='editarInventario'),
    #---------------- VENTAS ----------------------
 
    path('agregar_Venta/', views.agregar_Venta_vista, name='agregarVenta'),
    # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
    path('eiminar_Venta/', views.eliminar_Venta_vista, name='eliminarVenta'),
+   path('editarVenta/<int:idventa>/', views.editarVenta, name='editarVenta'),
     #-------------- NOVEDADES PERSONAL --------------------------
    path('novedades_empleados/', views.novedad_Empleado_vista, name='NovedadesEmpleados'),
    path('agregar_Novedad_Empleado/', views.agregar_Novedad_Empleado_vista, name='agregarNovedadEmpleado'),

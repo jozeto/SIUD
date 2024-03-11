@@ -282,6 +282,8 @@ class Cliente(models.Model):
     class Meta: 
         verbose_name = 'cliente'
         verbose_name_plural = 'clientes'
+    def __str__(self):
+        return f"{self.cod_cliente}"
     
 
 
