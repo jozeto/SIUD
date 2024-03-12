@@ -3,6 +3,8 @@ from ventas.models import *
 from decimal import Decimal
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.forms import HiddenInput
+from django.core.exceptions import ValidationError
 
 
 class AgregarClienteForm(forms.ModelForm):
@@ -149,6 +151,12 @@ class AgregarProductoForm(forms.ModelForm):
                   'imagen':'Imagen', 'idcategoria_producto':'Categoria Producto', 'idtalla':'Talla Prodcuto'}
 
 
+class EditarProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'imagen', 'idcategoria_producto', 'idtalla'] 
+        labels = {'nombre_producto':'Producto', 'precio_venta':'Precio', 'descripcion_producto':'Descripción', 'cantidad_productos':'Cantidad de Productos',
+                  'imagen':'Imagen', 'idcategoria_producto':'Categoría Producto', 'idtalla':'Talla Producto'}
 
 
 
@@ -172,28 +180,30 @@ class EditarInventarioForm(forms.ModelForm):
         
 #------------------- VENTAS -----------------
 
+
 class AgregarVentaForm(forms.ModelForm):
-    total_venta = forms.DecimalField(label='Total Venta', disabled=True, required=False)
-    
+    descuento_porcentaje = forms.DecimalField(label='Descuento (%)', required=False)
 
     class Meta:
         model = Venta
-        fields = ['idventa','fecha_venta','cantidad_productos', 'descuento_venta','precio_venta','total_venta','cod_empleado', 'cod_producto', 'cod_cliente'] 
-        labels = {'idventa':'No. Venta','fecha_venta':'fecha_venta','cantidad_productos':'Cantidad Productos', 'descuento_venta':'Total Descuento','precio_venta':'Valor Unidad','total_venta':'Total Venta:',
-                  'cod_empleado':'Vendido por: ', 'cod_producto':'Producto', 'cod_cliente':'Cliente a Facturar'}
-        widgets = {
-
-        }
+        fields = ['idventa', 'fecha_venta', 'cantidad_productos', 'precio_venta', 'cod_empleado', 'cod_producto', 'cod_cliente']
+        labels = {'idventa': 'No. Venta', 'fecha_venta': 'fecha_venta', 'cantidad_productos': 'Cantidad Productos', 'precio_venta': 'Valor Unidad', 'cod_empleado': 'Vendido por:', 'cod_producto': 'Producto', 'cod_cliente': 'Cliente a Facturar'}
+        widgets = {}
 
     def clean(self):
         cleaned_data = super().clean()
         cantidad_productos = int(cleaned_data.get('cantidad_productos'))
-        precio_venta = Decimal(cleaned_data.get('cod_producto').precio_venta)
-        descuento_venta = Decimal(cleaned_data.get('descuento_venta'))
+        precio_venta = Decimal(cleaned_data.get('precio_venta'))
+        descuento_porcentaje = Decimal(cleaned_data.get('descuento_porcentaje', 0))  # Default to 0 if no value provided
 
-        if cantidad_productos is not None and precio_venta is not None and descuento_venta is not None:
-            total_venta = cantidad_productos * precio_venta - descuento_venta
-            cleaned_data['total_venta'] = total_venta
+        if cantidad_productos is not None and precio_venta is not None and descuento_porcentaje is not None:
+            # Calcular el total de la venta y el descuento en valor absoluto
+            total_venta = cantidad_productos * precio_venta
+            descuento_venta = total_venta * (descuento_porcentaje / 100)
+            total_venta_con_descuento = total_venta - descuento_venta
+
+            cleaned_data['descuento_venta'] = descuento_venta  # Guardar el descuento en porcentaje en descuento_venta
+            cleaned_data['total_venta'] = total_venta_con_descuento
 
         # Verificar disponibilidad del producto en el inventario
         producto = cleaned_data.get('cod_producto')
@@ -201,6 +211,11 @@ class AgregarVentaForm(forms.ModelForm):
             self.add_error('cod_producto', "No hay suficientes productos en el inventario.")
 
         return cleaned_data
+
+
+
+
+
     
 class EditarVentaForm(forms.ModelForm):
     total_venta = forms.DecimalField(label='Total Venta', disabled=True, required=False)

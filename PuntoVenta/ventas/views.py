@@ -107,23 +107,6 @@ def agregar_Cliente_vista(request):
     return render(request, 'clientes.html', {'form': form})
 
 
-@login_required
-def editarVenta(request, idventa):
-    venta = get_object_or_404(Venta, idventa=idventa)
-
-    if request.method == 'POST':
-        form = EditarVentaForm(request.POST, instance=venta)
-        if form.is_valid():
-            form.save()
-            return redirect('agregarVenta')  # Reemplaza 'Clientes' con el nombre de la URL a la que quieres redirigir
-    else:
-        # Aquí asegúrate de que la instancia de la venta tenga la fecha de venta correcta
-        form = EditarVentaForm(instance=venta)
-        form.fields['fecha_venta'].initial = datetime.strftime(venta.fecha_venta, '%Y-%m-%d')
-
-    return render(request, 'editarVenta.html', {'form': form})
-
-
 
 @login_required
 def editar_Cliente_vista(request, cod_cliente):
@@ -351,19 +334,32 @@ def agregar_Producto_vista(request):
 
     return redirect('Productos')
 
-"""
 
-def editar_Producto_vista(request):
-    cliente = get_object_or_404(Cliente, pk="id_personal_editar")
-    if request.method == 'POST':
-        form = EditarProductoForm(request.POST, instance=cliente)
-        if form.is_valid():
-            form.save()
-            # Redireccionar o realizar alguna acción después de guardar los cambios
+@login_required
+def editarProducto(request, cod_producto):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para editar Inventarios.")
+        return redirect('Inventarios')
     else:
-        form = EditarProdcutoForm(instance=cliente)
-    return redirect('Productos')
-"""
+    
+    
+
+        producto = get_object_or_404(Producto, cod_producto=cod_producto)
+
+        if request.method == 'POST':
+            form = EditarProductoForm(request.POST, instance=producto)
+            if form.is_valid():
+                form.save()
+                return redirect('Productos')
+        else:
+            form = EditarProductoForm(instance=producto)
+
+        context = {
+            'form': form,
+            'inventario': producto,
+        }
+    return render(request, 'editarproducto.html', context)
+
 @login_required
 def eliminar_Producto_vista(request):
     if request.method == 'POST':
@@ -503,13 +499,22 @@ def ventas_vista(request):
     }
 
     return render(request, 'ventas.html', context)
+
 @login_required
 def agregar_Venta_vista(request):
     if request.method == 'POST':
         form = AgregarVentaForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                form.save()
+                venta = form.save(commit=False)  # Guarda el formulario pero no en la base de datos todavía
+                cantidad_productos = venta.cantidad_productos
+                precio_venta = venta.precio_venta
+                total_venta = cantidad_productos * precio_venta
+                descuento_porcentaje = form.cleaned_data['descuento_porcentaje'] or 0  # Obtén el descuento en porcentaje del formulario
+                descuento_venta = total_venta * (descuento_porcentaje / 100)
+                venta.descuento_venta = descuento_venta  # Asigna el descuento calculado al campo descuento_venta
+                venta.total_venta = total_venta - descuento_venta  # Calcula el total de la venta con descuento
+                venta.save()  # Ahora guarda la venta con el descuento calculado
                 messages.success(request, "Venta registrada exitosamente.")
             except Exception as e:
                 messages.error(request, f"Error al guardar la venta: {e}")
@@ -519,6 +524,26 @@ def agregar_Venta_vista(request):
         form = AgregarVentaForm()
 
     return redirect('Ventas')
+
+
+@login_required
+def editarVenta(request, idventa):
+    venta = get_object_or_404(Venta, idventa=idventa)
+
+    if request.method == 'POST':
+        form = EditarVentaForm(request.POST, instance=venta)
+        if form.is_valid():
+            form.save()
+            return redirect('agregarVenta')  # Reemplaza 'Clientes' con el nombre de la URL a la que quieres redirigir
+    else:
+        # Aquí asegúrate de que la instancia de la venta tenga la fecha de venta correcta
+        form = EditarVentaForm(instance=venta)
+        form.fields['fecha_venta'].initial = datetime.strftime(venta.fecha_venta, '%Y-%m-%d')
+
+    return render(request, 'editarVenta.html', {'form': form})
+
+
+
 
 @login_required
 def eliminar_Venta_vista(request):

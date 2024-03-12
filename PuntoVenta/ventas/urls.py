@@ -23,7 +23,7 @@ urlpatterns = [
     #---------PRODUCTOS--------------
     path('productos/', views.productos_vista, name='Productos'),
     path('agregar_Producto/', views.agregar_Producto_vista, name='agregarProducto'),
-   # path('editar_Producto/', views.editar_Producto_vista, name='editarProducto'),
+    path('editarProducto/<cod_producto>/', views.editarProducto, name='editarProducto'),
     path('eiminar_Producto/', views.eliminar_Producto_vista, name='eliminarProducto'),
     #-------------- INVENTARIO --------------------------
    path('inventarios/', views.inventarios_vista, name='Inventarios'),
@@ -40,19 +40,19 @@ urlpatterns = [
     #-------------- NOVEDADES PERSONAL --------------------------
    path('novedades_empleados/', views.novedad_Empleado_vista, name='NovedadesEmpleados'),
    path('agregar_Novedad_Empleado/', views.agregar_Novedad_Empleado_vista, name='agregarNovedadEmpleado'),
-   # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
+   
    path('eiminar_NovedadEmpleado/', views.eliminar_Novedad_Empleado_vista, name='eliminarNovedadEmpleado'),
 
        #-------------- PQRS --------------------------
    path('pqrs/', views.pqrs_vista, name='Pqrs'),
    path('agregar_pqrs/', views.agregar_Pqrs_vista, name='agregarPqrs'),
-   # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
+   
    path('eiminar_pqrs/', views.eliminar_Pqrs_vista, name='eliminarPqrs'),
 
        #-------------- COTIZACION --------------------------
    path('novedades_Productos/', views.novedad_Producto_vista, name='novedadesProductos'),
    path('agregar_Novedad_Producto/', views.agregar_Novedad_Producto_vista, name='agregarNovedadProducto'),
-   # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
+   
    path('eiminar_Novedad_Producto/', views.eliminar_Novedad_Producto_vista, name='eliminarNovedadProducto'),
 
 
