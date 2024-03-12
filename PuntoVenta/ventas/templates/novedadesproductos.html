@@ -48,7 +48,7 @@
                 <h5 class="modal-title text-dark">Editar</h5>
             </div>
             <div class="modal-body bg-dark text-white">
-                <form method="POST" action="{% url 'editarCliente' %}" enctype="multipart/form-data">{% csrf_token %}
+                <form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
                     <input type="hidden" id="id_personal_editar" name="id_personal_editar">
                     {% for field in form_editar %}
                     <p> {{field.label}} <br>

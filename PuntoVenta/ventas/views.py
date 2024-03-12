@@ -36,7 +36,7 @@ def exit(request):
 
 
 #--------------------------CLIENTES -----------------------
-
+@login_required
 def clientes_vista(request):
     if not request.user.is_staff:
         return render(request,"home.html")
@@ -57,7 +57,7 @@ def clientes_vista(request):
         'tiposcliente': tiposcliente
     }
     return render(request, 'clientes.html', context)
-
+@login_required
 def agregar_Cliente_vista(request):
     if request.method == 'POST':
         form = AgregarClienteForm(request.POST, request.FILES)
@@ -107,7 +107,7 @@ def agregar_Cliente_vista(request):
     return render(request, 'clientes.html', {'form': form})
 
 
-
+@login_required
 def editarVenta(request, idventa):
     venta = get_object_or_404(Venta, idventa=idventa)
 
@@ -123,26 +123,9 @@ def editarVenta(request, idventa):
 
     return render(request, 'editarVenta.html', {'form': form})
 
-def editarInventario(request, idinventario):
-    inventario = get_object_or_404(Inventario, idinventario=idinventario)
-
-    if request.method == 'POST':
-        form = EditarInventarioForm(request.POST, instance=inventario)
-        if form.is_valid():
-            form.save()
-            return redirect('agregarInventario')
-    else:
-        form = EditarInventarioForm(instance=inventario)
-
-    context = {
-        'form': form,
-        'inventario': inventario,
-    }
-    return render(request, 'editarInventario.html', context)
 
 
-
-
+@login_required
 def editar_Cliente_vista(request, cod_cliente):
     cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
     persona = cliente.iddocumento
@@ -177,27 +160,7 @@ def editar_Cliente_vista(request, cod_cliente):
 
 
 
-
-
-#def editar_Cliente_vista(request, cod_cliente):
-   # cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
-
-    #if request.method == 'POST':
-     #   form = EditarClienteForm(request.POST, instance=cliente)
-      #  if form.is_valid():
-       #     form.save()
-        #    return redirect('Clientes')
-    #else:
-     #   form = EditarClienteForm(instance=cliente)
-
-#    data = {
- #       'form': form
-  #  }
-
-   # return render(request, 'clientes.html', data)
-###
-
-
+@login_required
 def eliminar_Cliente_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
@@ -224,7 +187,7 @@ def eliminar_Cliente_vista(request):
     return redirect('Clientes')
 
 #---------------------------- EMPLEADOS ---------------
-
+@login_required
 def empleados_vista(request):
     if not request.user.is_staff:
         return render(request,"home.html")
@@ -252,7 +215,7 @@ def empleados_vista(request):
 
     }
     return render(request, 'empleados.html', context)
-
+@login_required
 def agregar_Empleado_vista(request):
     if request.method == 'POST':
         form = AgregarEmpleadoForm(request.POST, request.FILES)
@@ -314,7 +277,7 @@ def agregar_Empleado_vista(request):
 
     return render(request, 'empleados.html', {'form': form})
 
-
+@login_required
 def editar_Empleado_vista(request):
     cliente = get_object_or_404(Cliente, pk="id_personal_editar")
     if request.method == 'POST':
@@ -326,7 +289,7 @@ def editar_Empleado_vista(request):
         form = EditarClienteForm(instance=cliente)
     return redirect('Empleados')
 
-
+@login_required
 def eliminar_Empleado_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
@@ -358,7 +321,7 @@ def eliminar_Empleado_vista(request):
 
 
 #------------- PRODUCTOS -------------------
-
+@login_required
 def productos_vista(request):
     
     producto = Producto.objects.all()
@@ -375,7 +338,7 @@ def productos_vista(request):
     }
 
     return render(request, 'productos.html', context)
-
+@login_required
 def agregar_Producto_vista(request):
     if request.method == 'POST':
         form = AgregarProductoForm(request.POST, request.FILES)
@@ -401,7 +364,7 @@ def editar_Producto_vista(request):
         form = EditarProdcutoForm(instance=cliente)
     return redirect('Productos')
 """
-
+@login_required
 def eliminar_Producto_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
@@ -418,7 +381,7 @@ def eliminar_Producto_vista(request):
 
 
 #-------------------- Inventario 
-
+@login_required
 def inventarios_vista(request):
     inventario = Inventario.objects.all()
     empleado = Empleado.objects.all()
@@ -440,52 +403,88 @@ def inventarios_vista(request):
     }
 
     return render(request, 'inventarios.html', context)
-
+@login_required
 def agregar_Inventario_vista(request):
-    if request.method == 'POST':
-        form = AgregarInventarioForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                # Guardar la entrada de inventario
-                inventario = form.save()
-
-                # Obtener el producto correspondiente al código del producto ingresado en el formulario
-                codigo_producto = inventario.cod_producto.cod_producto
-                producto = Producto.objects.get(cod_producto=codigo_producto)
-
-                # Sumar la cantidad de productos del inventario al total de productos del modelo Producto
-                producto.cantidad_productos += inventario.cantidad_productos
-                producto.save()
-
-                # Redireccionar a la página de inventarios
-                return redirect('Inventarios')
-
-            except Exception as e:
-                # Manejar el error si ocurre algún problema
-                messages.error(request, f"Error al guardar el Inventario: {str(e)}")
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para eliminar ventas.")
+        return redirect('Inventarios')
     else:
-        form = AgregarInventarioForm()
+        if request.method == 'POST':
+            form = AgregarInventarioForm(request.POST, request.FILES)
+            if form.is_valid():
+                try:
+                    # Guardar la entrada de inventario
+                    inventario = form.save()
 
-    return redirect('Inventarios')
+                    # Obtener el producto correspondiente al código del producto ingresado en el formulario
+                    codigo_producto = inventario.cod_producto.cod_producto
+                    producto = Producto.objects.get(cod_producto=codigo_producto)
 
+                    # Sumar la cantidad de productos del inventario al total de productos del modelo Producto
+                    producto.cantidad_productos += inventario.cantidad_productos
+                    producto.save()
+
+                    # Redireccionar a la página de inventarios
+                    return redirect('Inventarios')
+
+                except Exception as e:
+                    # Manejar el error si ocurre algún problema
+                    messages.error(request, f"Error al guardar el Inventario: {str(e)}")
+        else:
+            form = AgregarInventarioForm()
+
+        return redirect('Inventarios')
+    
+@login_required
+def editarInventario(request, idinventario):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para editar Inventarios.")
+        return redirect('Inventarios')
+    else:
+    
+    
+
+        inventario = get_object_or_404(Inventario, idinventario=idinventario)
+
+        if request.method == 'POST':
+            form = EditarInventarioForm(request.POST, instance=inventario)
+            if form.is_valid():
+                form.save()
+                return redirect('agregarInventario')
+        else:
+            form = EditarInventarioForm(instance=inventario)
+
+        context = {
+            'form': form,
+            'inventario': inventario,
+        }
+        return render(request, 'editarInventario.html', context)
+
+
+@login_required
 def eliminar_Inventario_vista(request):
-    if request.method == 'POST':
-        id_personal_eliminar = request.POST.get('id_personal_eliminar')
-        if id_personal_eliminar:
-            try:
-                inventario = Inventario.objects.get(pk=id_personal_eliminar)
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para eliminar Inventarios.")
+        return redirect('Inventarios')
+    else:
+    
+        if request.method == 'POST':
+            id_personal_eliminar = request.POST.get('id_personal_eliminar')
+            if id_personal_eliminar:
+                try:
+                    inventario = Inventario.objects.get(pk=id_personal_eliminar)
 
-                inventario.delete() 
+                    inventario.delete() 
 
-            except Inventario.DoesNotExist:
-                messages.error(request, "El inventario no existe")
+                except Inventario.DoesNotExist:
+                    messages.error(request, "El inventario no existe")
 
-    return redirect('Inventarios')
+        return redirect('Inventarios')
 
 
 
 #-------------------- VENTAS-------------------
-
+@login_required
 def ventas_vista(request):
 
     venta = Venta.objects.all()
@@ -504,7 +503,7 @@ def ventas_vista(request):
     }
 
     return render(request, 'ventas.html', context)
-
+@login_required
 def agregar_Venta_vista(request):
     if request.method == 'POST':
         form = AgregarVentaForm(request.POST, request.FILES)
@@ -521,23 +520,27 @@ def agregar_Venta_vista(request):
 
     return redirect('Ventas')
 
-
+@login_required
 def eliminar_Venta_vista(request):
-    if request.method == 'POST':
-        id_personal_eliminar = request.POST.get('id_personal_eliminar')
-        if id_personal_eliminar:
-            try:
-                venta = Venta.objects.get(pk=id_personal_eliminar)
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para eliminar ventas.")
+        return redirect('Ventas')
+    else:
+        if request.method == 'POST':
+            id_personal_eliminar = request.POST.get('id_personal_eliminar')
+            if id_personal_eliminar:
+                try:
+                    venta = Venta.objects.get(pk=id_personal_eliminar)
 
-                venta.delete() 
+                    venta.delete() 
 
-            except Venta.DoesNotExist:
-                messages.error(request, "No es posible")
+                except Venta.DoesNotExist:
+                    messages.error(request, "No es posible")
 
-    return redirect('Ventas')
+        return redirect('Ventas')
 
 # --------------NOVEDADES PERSONAL -----------------
-
+@login_required
 def novedad_Empleado_vista(request):
     if not request.user.is_staff:
         return render(request,"home.html")
@@ -555,7 +558,7 @@ def novedad_Empleado_vista(request):
     }
 
     return render(request, 'novedadesempleados.html', context)
-
+@login_required
 def agregar_Novedad_Empleado_vista(request):
     if request.method == 'POST':
         form = AgregarNovedadEmpleadoForm(request.POST, request.FILES)
@@ -567,7 +570,7 @@ def agregar_Novedad_Empleado_vista(request):
                 return redirect('NovedadesEmpleados')
 
     return redirect('NovedadesEmpleados')
-
+@login_required
 def eliminar_Novedad_Empleado_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
@@ -584,10 +587,9 @@ def eliminar_Novedad_Empleado_vista(request):
 
 
 # --------------PQRS -----------------
-
+@login_required
 def pqrs_vista(request):
-    if not request.user.is_staff:
-        return render(request,"home.html")
+    
     pqrs = Pqr.objects.all()
     tipopqrs = TipoPQR.objects.all()
     estadopqrs = EstadoPQR.objects.all()
@@ -606,7 +608,7 @@ def pqrs_vista(request):
     }
 
     return render(request, 'pqrs.html', context)
-
+@login_required
 def agregar_Pqrs_vista(request):
     if request.method == 'POST':
         form = AgregarPqrsForm(request.POST, request.FILES)
@@ -618,7 +620,7 @@ def agregar_Pqrs_vista(request):
                 return redirect('Pqrs')
 
     return redirect('Pqrs')
-
+@login_required
 def eliminar_Pqrs_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
@@ -635,7 +637,7 @@ def eliminar_Pqrs_vista(request):
 
 
 # --------------NOVEDADES PRODUCTOS -----------------
-
+@login_required
 def novedad_Producto_vista(request):
     novedadproducto = Novedadproducto.objects.all()
     tiponovedad = Tiponovedadproducto.objects.all()
@@ -657,7 +659,7 @@ def novedad_Producto_vista(request):
     }
 
     return render(request, 'novedadesproductos.html', context)
-
+@login_required
 def agregar_Novedad_Producto_vista(request):
     if request.method == 'POST':
         form = AgregarNovedadProductoForm(request.POST, request.FILES)
@@ -669,7 +671,7 @@ def agregar_Novedad_Producto_vista(request):
                 return redirect('novedadesProductos')
 
     return redirect('novedadesProductos')
-
+@login_required
 def eliminar_Novedad_Producto_vista(request):
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
