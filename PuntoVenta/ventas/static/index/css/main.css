@@ -53,3 +53,7 @@ table, th, td {
    color: #fff;
    
 }
+
+.sidebar-collapse .nav-item.logout .logout-text {
+   display: none;
+ }

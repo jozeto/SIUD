@@ -99,13 +99,30 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'Inventarios' %}" class="nav-link">
-                <i class="fas fa-warehouse"></i>
+              <a href="#" class="nav-link">
+                <i class="fas fa-box"></i>
                 <p>
-                  Inventario
+                  Gestion Inventario
+                  <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'Inventarios' %}" class="nav-link">
+                    <i class="fas fa-box-open"></i>
+                    <p>Inventarios</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'novedadesProductos' %}" class="nav-link">
+                    <i class="far fa-sticky-note"></i>
+                    <p>Novedades Productos</p>
+                  </a>
+                </li>
+              </ul>
             </li>
+            
+            
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="far fa-building"></i>
@@ -150,13 +167,8 @@
                 </li>
               </ul>
             </li>
-            <li class="nav-header">EMPRESA</li>
-            <li class="nav-item">
-              <a href="{% url 'novedadesProductos' %}" class="nav-link">
-                <i class=" nav-icon fas fa-globe"></i>
-                <p>Información</p>
-              </a>
-            </li>
+            
+            
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="fas fa-users"></i>
@@ -202,21 +214,18 @@
                 
               </ul>
             </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{% url 'exit' %}" class="nav-link">
+                <i class="fas fa-nav-icon far fa-circle text-danger"></i>
+                <p>
+                  Cerrar Sesion
+                </p>
+              </a>
+            </li>
+            {% endif %}
 
-
-          </ul>
-        </nav>
-        <li class="nav-item">
-          {% if request.user.is_authenticated %}
-            <a href="{% url 'exit' %}" class="nav-link">
-          {% endif %}
-              <i class="nav-icon far fa-circle text-danger"></i>
-              <p>Cerrar sesión</p>
-          {% if request.user.is_authenticated %}
-            </a>
-          {% endif %}
-        </li>
-        
+            
         <!-- /.sidebar-menu -->
       </div>
       <!-- /.sidebar -->
@@ -293,6 +302,15 @@
   <script src="{% static 'index/DataTables/Buttons-2.0.1/js/buttons.html5.min.js' %}"></script>
   <script src="{% static 'index/DataTables/Buttons-2.0.1/js/pdfmaker.min.js' %}"></script>
   <script type="text/javascript" charset="utf8" src="{% static 'index/js/main.js' %}"></script>
-</body>
 
-</html>
+  <script src="{% static 'lib/adminlite/plugins/jquery/jquery.min.js' %}"></script>
+  
+  
+ 
+
+  
+
+  
+  
+  </body>
+  </html>
