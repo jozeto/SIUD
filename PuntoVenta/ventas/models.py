@@ -390,7 +390,7 @@ class Cotizacion(models.Model):
 class Venta(models.Model):
     idventa = models.AutoField(primary_key=True)
     cantidad_productos = models.PositiveIntegerField(null=False, blank=False)
-    descuento_venta = models.DecimalField(max_digits=5, decimal_places=2, null=False, blank=False, default=0.0)
+    descuento_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False, default=0.0)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False, default=0.0)
     total_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     fecha_venta = models.DateTimeField(null=False, blank=False, default=timezone.now)
@@ -399,7 +399,6 @@ class Venta(models.Model):
     cod_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
     class Meta:
         verbose_name = 'venta'
         verbose_name_plural = 'ventas'

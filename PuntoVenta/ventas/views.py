@@ -11,7 +11,7 @@ from django.contrib.auth import logout
 from crispy_forms.helper import FormHelper
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-
+from decimal import Decimal,InvalidOperation
 
 # Create your views here.
 """
@@ -506,17 +506,25 @@ def agregar_Venta_vista(request):
         form = AgregarVentaForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                venta = form.save(commit=False)  # Guarda el formulario pero no en la base de datos todavía
-                cantidad_productos = venta.cantidad_productos
-                precio_venta = venta.precio_venta
-                total_venta = cantidad_productos * precio_venta
-                descuento_porcentaje = form.cleaned_data['descuento_porcentaje'] or 0  # Obtén el descuento en porcentaje del formulario
-                descuento_venta = total_venta * (descuento_porcentaje / 100)
-                venta.descuento_venta = descuento_venta  # Asigna el descuento calculado al campo descuento_venta
-                venta.total_venta = total_venta - descuento_venta  # Calcula el total de la venta con descuento
-                venta.save()  # Ahora guarda la venta con el descuento calculado
-                messages.success(request, "Venta registrada exitosamente.")
-            except Exception as e:
+                venta = form.save(commit=False)
+                cantidad_productos = form.cleaned_data['cantidad_productos']
+                if cantidad_productos <= 0:
+                    raise ValidationError("La cantidad de productos debe ser un número positivo.")
+                
+                precio_venta = form.cleaned_data['precio_venta']
+                total_venta = Decimal(cantidad_productos) * precio_venta
+                descuento_porcentaje = form.cleaned_data['descuento_porcentaje'] or 0
+                descuento_venta = total_venta * (Decimal(descuento_porcentaje) / 100)
+
+                if total_venta <= 0 or descuento_venta < 0:
+                    raise ValueError("Los valores de total_venta y descuento_venta no son válidos.")
+
+                venta.descuento_venta = descuento_venta
+                venta.total_venta = total_venta - descuento_venta
+
+                venta.save()
+                messages.success(request, "¡Venta registrada exitosamente!")
+            except (ValueError, InvalidOperation, ValidationError) as e:
                 messages.error(request, f"Error al guardar la venta: {e}")
         else:
             messages.error(request, "No hay suficientes productos en el inventario.")
@@ -524,6 +532,8 @@ def agregar_Venta_vista(request):
         form = AgregarVentaForm()
 
     return redirect('Ventas')
+
+
 
 
 @login_required
