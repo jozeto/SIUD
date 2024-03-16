@@ -54,6 +54,8 @@ urlpatterns = [
    path('agregar_Novedad_Producto/', views.agregar_Novedad_Producto_vista, name='agregarNovedadProducto'),
    
    path('eiminar_Novedad_Producto/', views.eliminar_Novedad_Producto_vista, name='eliminarNovedadProducto'),
+   path('get-precio/<str:cod_producto>/', views.get_precio_producto, name='get_precio_producto'),
+   path('get-tallas/<str:cod_producto>/', views.get_tallas_disponibles, name='get_tallas_disponibles'),
 
 
 

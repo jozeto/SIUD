@@ -147,6 +147,7 @@ class EditarEmpleadoForm(forms.ModelForm):
 
 """
 #------------------- PRODUCTOS-----------------------------
+
 class AgregarProductoForm(forms.ModelForm):
 
     class Meta:
@@ -154,6 +155,7 @@ class AgregarProductoForm(forms.ModelForm):
         fields = ['cod_producto', 'nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'imagen', 'idcategoria_producto', 'idtalla'] 
         labels = {'cod_producto':'Codigo Producto', 'nombre_producto':'Producto', 'precio_venta':'Precio', 'descripcion_producto':'Descripcion', 'cantidad_productos':'Cantidad de Productos',
                   'imagen':'Imagen', 'idcategoria_producto':'Categoria Producto', 'idtalla':'Talla Prodcuto'}
+
 
 
 class EditarProductoForm(forms.ModelForm):
@@ -186,12 +188,9 @@ class EditarInventarioForm(forms.ModelForm):
 #------------------- VENTAS -----------------
 
 class AgregarVentaForm(forms.ModelForm):
-    cantidad_productos = forms.IntegerField(
-        label='Cantidad Productos'
-    )
-    precio_venta = forms.DecimalField(
-        label='Precio Venta'
-    )
+    cod_producto = forms.CharField(widget=forms.HiddenInput(), required=False)
+   
+    
     descuento_porcentaje = forms.DecimalField(
         label='Descuento (%)',
         validators=[MinValueValidator(1), MaxValueValidator(100)]
@@ -199,8 +198,8 @@ class AgregarVentaForm(forms.ModelForm):
 
     class Meta:
         model = Venta
-        fields = ['idventa', 'fecha_venta', 'cantidad_productos', 'precio_venta', 'cod_empleado', 'cod_producto', 'cod_cliente']
-        labels = {'idventa': 'No. Venta', 'fecha_venta': 'fecha_venta', 'cantidad_productos': 'Cantidad Productos', 'precio_venta': 'Valor Unidad', 'total_venta': 'Total Venta:', 'cod_empleado': 'Vendido por:', 'cod_producto': 'Producto', 'cod_cliente': 'Cliente a Facturar'}
+        fields = ['idventa', 'fecha_venta',  'cod_empleado',  'cod_cliente']
+        labels = {'idventa': 'No. Venta', 'fecha_venta': 'fecha_venta', 'cod_empleado': 'Vendido por:', 'cod_cliente': 'Cliente a Facturar'}
         widgets = {}
 
     def clean(self):
@@ -217,11 +216,18 @@ class AgregarVentaForm(forms.ModelForm):
             cleaned_data['descuento_venta'] = descuento_venta
             cleaned_data['total_venta'] = total_venta_con_descuento
 
-        producto = cleaned_data.get('cod_producto')
-        if producto and producto.cantidad_productos < cantidad_productos:
-            raise forms.ValidationError("No hay suficientes productos en el inventario.")
+        cod_producto = cleaned_data.get('cod_producto')
+        if cod_producto:
+            producto = Producto.objects.get(cod_producto=cod_producto)
+            if producto.cantidad_productos is not None and cantidad_productos is not None and producto.cantidad_productos < cantidad_productos:
+                raise forms.ValidationError("No hay suficientes productos en el inventario.")
 
         return cleaned_data
+
+
+
+
+
 
 class EditarVentaForm(forms.ModelForm):
     total_venta = forms.DecimalField(label='Total Venta', disabled=True, required=False)

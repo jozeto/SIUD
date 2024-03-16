@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from decimal import Decimal
 
 # Create your models here.
 
@@ -308,8 +308,7 @@ class Empleado(models.Model):
         verbose_name = 'empleado'
         verbose_name_plural = 'empleados'
     def __str__(self):
-        return f"{self.cod_empleado}"
-
+        return f"{self.iddocumento.primer_nombre} {self.iddocumento.primer_apellido}"
 
 
 class Producto(models.Model):
@@ -328,7 +327,7 @@ class Producto(models.Model):
         verbose_name = 'producto'
         verbose_name_plural = 'productos'
     def __str__(self):
-        return f"{self.cod_producto}"
+        return f"{self.nombre_producto} {self.precio_venta} "
 
 
 
@@ -387,28 +386,41 @@ class Cotizacion(models.Model):
         return f"{self.idcotizacion}"
 
 
+
+
 class Venta(models.Model):
     idventa = models.AutoField(primary_key=True)
-    cantidad_productos = models.PositiveIntegerField(null=False, blank=False)
+    cantidad_productos = models.IntegerField(null=True, blank=True)
     descuento_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False, default=0.0)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False, default=0.0)
     total_venta = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     fecha_venta = models.DateTimeField(null=False, blank=False, default=timezone.now)
     cod_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     cod_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-    cod_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cod_producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = 'venta'
         verbose_name_plural = 'ventas'
 
     def save(self, *args, **kwargs):
+        if self.cod_producto:
+            producto = self.cod_producto
+            producto.cantidad_productos -= self.cantidad_productos
+            producto.save()
+
+        # Convertir self.precio_venta a Decimal
+        precio_venta_decimal = Decimal(str(self.precio_venta))
+
+        # Calcular el total de la venta
+        self.total_venta = precio_venta_decimal - self.descuento_venta
+
         super(Venta, self).save(*args, **kwargs)
-        # Restar la cantidad de productos vendidos del inventario
-        producto = self.cod_producto
-        producto.cantidad_productos -= self.cantidad_productos
-        producto.save()
+
+
   
 
 

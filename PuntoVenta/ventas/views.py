@@ -12,6 +12,9 @@ from crispy_forms.helper import FormHelper
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal,InvalidOperation
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.forms import ValidationError as FormValidationError
 
 # Create your views here.
 """
@@ -323,16 +326,23 @@ def productos_vista(request):
     return render(request, 'productos.html', context)
 @login_required
 def agregar_Producto_vista(request):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para editar Inventarios.")
+        return redirect('Inventarios')
+    
     if request.method == 'POST':
         form = AgregarProductoForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
-                form.save()
-            except:
-                messages(request,"error al guardar el producto")
-                return redirect('Productos')
+            form.save()
+            return redirect('Productos')
+    else:
+        form = AgregarProductoForm()
 
-    return redirect('Productos')
+    context = {
+        'form': form,
+    }
+    return render(request, 'productos.html', context)
+
 
 
 @login_required
@@ -487,9 +497,11 @@ def ventas_vista(request):
     empleado = Empleado.objects.all()
     producto = Producto.objects.all()
     cliente = Cliente.objects.all()
+    talla = Talla.objects.all()
     form_personal = AgregarVentaForm()
    # form_editar = EditarEmpleadoForm()
     context ={
+        'talla' : talla,
         'venta' : venta,
         'empleado' : empleado,
         'cliente' : cliente,
@@ -500,6 +512,11 @@ def ventas_vista(request):
 
     return render(request, 'ventas.html', context)
 
+
+
+
+
+
 @login_required
 def agregar_Venta_vista(request):
     if request.method == 'POST':
@@ -507,24 +524,35 @@ def agregar_Venta_vista(request):
         if form.is_valid():
             try:
                 venta = form.save(commit=False)
-                cantidad_productos = form.cleaned_data['cantidad_productos']
+                cantidad_productos = form.cleaned_data.get('cantidad_productos') or 1
+
                 if cantidad_productos <= 0:
                     raise ValidationError("La cantidad de productos debe ser un número positivo.")
-                
-                precio_venta = form.cleaned_data['precio_venta']
-                total_venta = Decimal(cantidad_productos) * precio_venta
-                descuento_porcentaje = form.cleaned_data['descuento_porcentaje'] or 0
-                descuento_venta = total_venta * (Decimal(descuento_porcentaje) / 100)
 
-                if total_venta <= 0 or descuento_venta < 0:
+                precio_venta = Decimal(request.POST.get('precio_venta_hidden', '0'))
+                if precio_venta < 0:
+                    raise ValidationError("El precio de venta no puede ser negativo.")
+
+                total_venta = Decimal(cantidad_productos) * precio_venta
+                descuento_porcentaje = form.cleaned_data.get('descuento_porcentaje', 0)
+                descuento_venta = (total_venta * Decimal(descuento_porcentaje)) / 100
+
+                if total_venta < 0 or descuento_venta < 0:
                     raise ValueError("Los valores de total_venta y descuento_venta no son válidos.")
 
                 venta.descuento_venta = descuento_venta
                 venta.total_venta = total_venta - descuento_venta
 
+                # Obtener el producto a partir del código del producto
+                cod_producto = form.cleaned_data['cod_producto']
+                producto = get_object_or_404(Producto, cod_producto=cod_producto)
+
+                producto.cantidad_productos -= cantidad_productos
+                producto.save()
+
                 venta.save()
                 messages.success(request, "¡Venta registrada exitosamente!")
-            except (ValueError, InvalidOperation, ValidationError) as e:
+            except (ValueError, ValidationError) as e:
                 messages.error(request, f"Error al guardar la venta: {e}")
         else:
             messages.error(request, "No hay suficientes productos en el inventario.")
@@ -532,6 +560,23 @@ def agregar_Venta_vista(request):
         form = AgregarVentaForm()
 
     return redirect('Ventas')
+
+
+
+
+
+def get_precio_producto(request, cod_producto):
+    producto = get_object_or_404(Producto, cod_producto=cod_producto)
+    precio = producto.precio_venta
+    return JsonResponse({'precio': str(precio)})
+
+def get_tallas_disponibles(request, cod_producto):
+    producto = get_object_or_404(Producto, cod_producto=cod_producto)
+    tallas = Talla.objects.filter(producto=producto)
+    data = {'tallas': list(tallas.values('idtalla', 'talla'))}
+    return JsonResponse(data)
+
+
 
 
 

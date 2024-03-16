@@ -24,9 +24,31 @@
                     <p class="alarma">{{error}}</p>
                     {% endfor %}
                     {% endfor %}
-                    {% for error in form.non_field_errors %}
-                    <p class="alarma">{{error}}</p>
-                    {% endfor %}
+                    
+                    <select id="producto-select" name="cod_producto">
+                        <option value="">Selecciona un producto</option>
+                        {% for producto in producto %}
+                        <option value="{{ producto.cod_producto }}">{{ producto.nombre_producto }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="tallas-select" name="talla">
+                        <option value="">Selecciona una talla</option>
+                        {% for talla in talla %}
+                        <option value="{{ talla.talla }}">{{ talla.talla }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <input type="number" id="cantidad" name="cantidad_productos" min="1" value="1">
+
+                    <input type="text" id="precio" name="precio_venta" readonly>
+                    <button type="button" id="agregar-producto">Agregar producto</button>
+                    <input type="hidden" id="precio_venta_hidden" name="precio_venta" value="">
+                    <input type="hidden" id="precio_venta_total" name="total_venta" value="">
+
+
+                    <ul id="resumen-venta">
+                        <!-- Aquí se mostrará el resumen de la venta -->
+                    </ul>
             </div>
             <div class="modal-footer bg-dark">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -40,6 +62,7 @@
         </div>
     </div>
 </div>
+
 
 
 
@@ -147,9 +170,96 @@
                 text: "{{ message }}",
             });
         </script>
+        
     {% endif %}
 {% endfor %}
 {% endif %}
+<script>document.addEventListener("DOMContentLoaded", function() {
+    let productoSelect = document.getElementById("producto-select");
+    let tallasSelect = document.getElementById("tallas-select");
+    let cantidadInput = document.getElementById("cantidad");
+    let precioInput = document.getElementById("precio");
+    let resumenVenta = document.getElementById("resumen-venta");
 
+    productoSelect.addEventListener("change", function() {
+        let codProducto = this.value;
+        fetch(`/get-tallas/${codProducto}/`)
+            .then(response => response.json())
+            .then(data => {
+                tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
+                data.tallas.forEach(talla => {
+                    let option = document.createElement("option");
+                    option.value = talla.id;
+                    option.text = talla.talla;
+                    tallasSelect.appendChild(option);
+                });
+            });
+    });
+
+    document.getElementById("agregar-producto").addEventListener("click", function() {
+        let producto = productoSelect.options[productoSelect.selectedIndex].text;
+        let talla = tallasSelect.options[tallasSelect.selectedIndex].text;
+        let precio = precioInput.value;
+        let cantidad = cantidadInput.value;
+        let item = document.createElement("li");
+        item.textContent = `Producto: ${producto}, Talla: ${talla}, Precio: ${precio}, Cantidad: ${cantidad}`;
+        resumenVenta.appendChild(item);
+
+        let productoId = productoSelect.value;
+        let tallaId = tallasSelect.value;
+        cantidad = parseInt(cantidadInput.value);
+
+        if (productoId && tallaId) {
+            fetch(`/actualizar-inventario/${productoId}/${tallaId}/${cantidad}/`, { method: 'PUT' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Inventario actualizado");
+                })
+                .catch(error => {
+                    console.error("Error al actualizar el inventario:", error);
+                });
+        }
+    });
+
+    productoSelect.addEventListener("change", function() {
+        let productId = this.value;
+        if (productId) {
+            fetch(`/get-precio/${productId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    precioInput.value = data.precio;
+                })
+                .catch(error => {
+                    console.error("Error al obtener el precio:", error);
+                });
+        }
+    });
+
+    cantidadInput.addEventListener("input", function() {
+        actualizarPrecio();
+    });
+
+    function actualizarPrecio() {
+        let productId = productoSelect.value;
+        let cantidad = cantidadInput.value;
+        console.log("productId:", productId);
+        console.log("cantidad:", cantidad);
+        if (productId && cantidad) {
+            fetch(`/calcular-precio/${productId}/${cantidad}/`)
+                .then(response => response.json())
+                .then(data => {
+                    precioInput.value = data.precio;
+                });
+        }
+    }
+
+    document.getElementById("agregar-producto").addEventListener("click", function() {
+        actualizarPrecio();
+    });
+
+});
+
+
+</script>
 
 {% endblock %}
