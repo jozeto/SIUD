@@ -402,26 +402,35 @@ class Venta(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        verbose_name = 'venta'
-        verbose_name_plural = 'ventas'
+    
 
-    def save(self, *args, **kwargs):
-        if self.cod_producto:
-            producto = self.cod_producto
-            producto.cantidad_productos -= self.cantidad_productos
-            producto.save()
+def save(self, *args, **kwargs):
+    if self.cod_producto:
+        producto = self.cod_producto
+        producto.cantidad_productos -= self.cantidad_productos
+        producto.save()
 
-        # Convertir self.precio_venta a Decimal
-        precio_venta_decimal = Decimal(str(self.precio_venta))
+    # Convertir self.precio_venta a Decimal
+    precio_venta_decimal = Decimal(str(self.precio_venta))
 
-        # Calcular el total de la venta
-        self.total_venta = precio_venta_decimal - self.descuento_venta
+    # Calcular el total de la venta
+    total_venta = 0
+    for detalle_venta in self.detalle_venta_set.all():
+        subtotal = detalle_venta.cantidad_productos * detalle_venta.precio_venta
+        total_venta += subtotal
 
-        super(Venta, self).save(*args, **kwargs)
+    total_venta -= self.descuento_venta
+
+    # Asignar el total de la venta calculado
+    self.total_venta = total_venta
+
+    # Verificar que total_venta no sea None o un valor vacío
+    if self.total_venta is None or self.total_venta == '':
+        raise ValueError("El campo 'total_venta' no puede ser nulo o vacío")
+
+    super(Venta, self).save(*args, **kwargs)
 
 
-  
 
 
 

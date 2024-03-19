@@ -188,9 +188,10 @@ class EditarInventarioForm(forms.ModelForm):
 #------------------- VENTAS -----------------
 
 class AgregarVentaForm(forms.ModelForm):
-    cod_producto = forms.CharField(widget=forms.HiddenInput(), required=False)
-   
     
+    cod_cliente = forms.ModelChoiceField(queryset=Cliente.objects.all())
+    # Otros campos de AgregarVentaForm...
+
     descuento_porcentaje = forms.DecimalField(
         label='Descuento (%)',
         validators=[MinValueValidator(1), MaxValueValidator(100)]
@@ -198,7 +199,7 @@ class AgregarVentaForm(forms.ModelForm):
 
     class Meta:
         model = Venta
-        fields = ['idventa', 'fecha_venta',  'cod_empleado',  'cod_cliente']
+        fields = ['idventa', 'fecha_venta', 'cod_empleado', 'cod_cliente']
         labels = {'idventa': 'No. Venta', 'fecha_venta': 'fecha_venta', 'cod_empleado': 'Vendido por:', 'cod_cliente': 'Cliente a Facturar'}
         widgets = {}
 
@@ -223,6 +224,8 @@ class AgregarVentaForm(forms.ModelForm):
                 raise forms.ValidationError("No hay suficientes productos en el inventario.")
 
         return cleaned_data
+
+
 
 
 

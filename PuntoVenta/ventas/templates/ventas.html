@@ -16,7 +16,9 @@
                 <h5 class="modal-title text-dark">Agregar nuevo</h5>
             </div>
             <div class="modal-body bg-dark text-white">
-                <form method="POST" action="{% url 'agregarVenta' %}" enctype="multipart/form-data">{% csrf_token %}
+                <form method="POST" action="{% url 'agregarVenta' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Campos del formulario -->
                     {% for field in form_personal %}
                     <p>{{field.label}} <br>
                         {{field|add_class:"form-control text-dark"}}</p>
@@ -24,7 +26,7 @@
                     <p class="alarma">{{error}}</p>
                     {% endfor %}
                     {% endfor %}
-                    
+                
                     <select id="producto-select" name="cod_producto">
                         <option value="">Selecciona un producto</option>
                         {% for producto in producto %}
@@ -37,28 +39,34 @@
                         <option value="{{ talla.talla }}">{{ talla.talla }}</option>
                         {% endfor %}
                     </select>
-                    
+                
                     <input type="number" id="cantidad" name="cantidad_productos" min="1" value="1">
-
                     <input type="text" id="precio" name="precio_venta" readonly>
                     <button type="button" id="agregar-producto">Agregar producto</button>
                     <input type="hidden" id="precio_venta_hidden" name="precio_venta" value="">
                     <input type="hidden" id="precio_venta_total" name="total_venta" value="">
-
-
+                    <input type="hidden" id="productos-seleccionados" name="productos_seleccionados">
+                    <input type="hidden" id="productos-seleccionados" name="productos_seleccionados">
+                    <input type="hidden" name="task_data" id="task_data_field"> <!-- Agrega este campo oculto -->
+                
                     <ul id="resumen-venta">
                         <!-- Aquí se mostrará el resumen de la venta -->
                     </ul>
+                
+                    <div class="modal-footer bg-dark">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            Agregar
+                        </button>
+                    </div>
+                </form>
+                
+            
+            
+                
             </div>
-            <div class="modal-footer bg-dark">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn btn-success">
-                    Agregar
-                </button>
-            </div>
-            </form>
         </div>
     </div>
 </div>
@@ -174,12 +182,16 @@
     {% endif %}
 {% endfor %}
 {% endif %}
-<script>document.addEventListener("DOMContentLoaded", function() {
+<script>
+document.addEventListener("DOMContentLoaded", function() {
     let productoSelect = document.getElementById("producto-select");
     let tallasSelect = document.getElementById("tallas-select");
     let cantidadInput = document.getElementById("cantidad");
     let precioInput = document.getElementById("precio");
     let resumenVenta = document.getElementById("resumen-venta");
+    let form = document.querySelector('form');
+
+    let productosSeleccionados = [];
 
     productoSelect.addEventListener("change", function() {
         let codProducto = this.value;
@@ -201,27 +213,32 @@
         let talla = tallasSelect.options[tallasSelect.selectedIndex].text;
         let precio = precioInput.value;
         let cantidad = cantidadInput.value;
+    
         let item = document.createElement("li");
         item.textContent = `Producto: ${producto}, Talla: ${talla}, Precio: ${precio}, Cantidad: ${cantidad}`;
         resumenVenta.appendChild(item);
-
-        let productoId = productoSelect.value;
-        let tallaId = tallasSelect.value;
-        cantidad = parseInt(cantidadInput.value);
-
-        if (productoId && tallaId) {
-            fetch(`/actualizar-inventario/${productoId}/${tallaId}/${cantidad}/`, { method: 'PUT' })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Inventario actualizado");
-                })
-                .catch(error => {
-                    console.error("Error al actualizar el inventario:", error);
-                });
-        }
+    
+        // Crear un objeto con los datos del producto para enviar al servidor
+        let productoData = {
+            id: productoSelect.value,
+            talla: talla,
+            cantidad: cantidadInput.value,
+            precio: precio // Agregar el precio al objeto productoData
+        };
+    
+        // Agregar el objeto productoData al array productosSeleccionados
+        productosSeleccionados.push(productoData);
+    
+        // Limpiar los campos
+        productoSelect.value = "";
+        tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
+        cantidadInput.value = "";
+        console.log("Productos seleccionados:", productosSeleccionados);
+        populateTaskData()
     });
+    
 
-    productoSelect.addEventListener("change", function() {
+    document.getElementById("producto-select").addEventListener("change", function() {
         let productId = this.value;
         if (productId) {
             fetch(`/get-precio/${productId}/`)
@@ -248,18 +265,68 @@
             fetch(`/calcular-precio/${productId}/${cantidad}/`)
                 .then(response => response.json())
                 .then(data => {
-                    precioInput.value = data.precio;
+                    if (data && !isNaN(data.precio)) {
+                        precioInput.value = data.precio.toFixed(2); // Ajusta el valor a dos decimales
+                    } else {
+                        console.error("Respuesta del servidor incorrecta:", data);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener el precio:", error);
                 });
         }
     }
 
-    document.getElementById("agregar-producto").addEventListener("click", function() {
-        actualizarPrecio();
+    function populateTaskData() {
+        const jsonData = JSON.stringify(productosSeleccionados);
+      
+        const taskDataField = document.getElementById("task_data_field");
+        taskDataField.value = jsonData;
+    }
+    
+
+    function agregarVenta() {
+        console.log("juan")
+        console.log(productosSeleccionados);
+        if (productosSeleccionados.length > 0) {
+          $.ajax({
+            url: '/agregar_Venta/',
+            type: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify({ productos: productosSeleccionados }),
+            success: function(data) {
+              console.log(data);
+              // Maneja la respuesta exitosa del servidor aquí
+            },
+            error: function(error) {
+              console.error('Error al enviar los datos al servidor:', error);
+              // Maneja los errores de la petición aquí
+            }
+          });
+        } else {
+          console.error("No hay productos seleccionados para agregar a la venta.");
+        }
+      }
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+      
     });
-
-});
-
-
 </script>
 
 {% endblock %}

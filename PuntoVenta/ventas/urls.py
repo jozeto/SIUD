@@ -31,6 +31,7 @@ urlpatterns = [
    # path('editar_Producto/', views.editar_Inventario_vista, name='editarInventario'),
    path('eiminar_Inventario/', views.eliminar_Inventario_vista, name='eliminarInventario'),
    path('editarInventario/<int:idinventario>/', views.editarInventario, name='editarInventario'),
+   path('actualizar-inventario/<str:producto_id>/<str:talla_id>/<int:cantidad>/', views.actualizar_inventario, name='actualizar_inventario'),
    #---------------- VENTAS ----------------------
 
    path('agregar_Venta/', views.agregar_Venta_vista, name='agregarVenta'),
@@ -56,6 +57,8 @@ urlpatterns = [
    path('eiminar_Novedad_Producto/', views.eliminar_Novedad_Producto_vista, name='eliminarNovedadProducto'),
    path('get-precio/<str:cod_producto>/', views.get_precio_producto, name='get_precio_producto'),
    path('get-tallas/<str:cod_producto>/', views.get_tallas_disponibles, name='get_tallas_disponibles'),
+   path('calcular-precio/<str:producto_id>/<int:cantidad>/', views.calcular_precio, name='calcular_precio'),
+
 
 
 

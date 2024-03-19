@@ -12,10 +12,14 @@ from crispy_forms.helper import FormHelper
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal,InvalidOperation
+import json 
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.forms import ValidationError as FormValidationError
-
+from django.utils import timezone
+from django.forms import formset_factory
+from pprint import pprint
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 """
 def ventas_vista(request):
@@ -499,6 +503,7 @@ def ventas_vista(request):
     cliente = Cliente.objects.all()
     talla = Talla.objects.all()
     form_personal = AgregarVentaForm()
+    inventario = Inventario.objects.all()
    # form_editar = EditarEmpleadoForm()
     context ={
         'talla' : talla,
@@ -507,6 +512,7 @@ def ventas_vista(request):
         'cliente' : cliente,
         'producto' : producto,
         'form_personal' : form_personal,
+        'inventario': inventario,
     #    'form_editar' : form_editar,
     }
 
@@ -517,53 +523,70 @@ def ventas_vista(request):
 
 
 
-@login_required
 def agregar_Venta_vista(request):
     if request.method == 'POST':
-        form = AgregarVentaForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                venta = form.save(commit=False)
-                cantidad_productos = form.cleaned_data.get('cantidad_productos') or 1
+        try:
+            with transaction.atomic():
+                # Procesar el formulario Django
+                form = AgregarVentaForm(request.POST)
+                if form.is_valid():
+                    cliente = form.cleaned_data['cod_cliente']
+                    venta = form.save(commit=False)
+                    venta.cod_cliente = cliente
 
-                if cantidad_productos <= 0:
-                    raise ValidationError("La cantidad de productos debe ser un número positivo.")
+                    # Obtener los productos del formulario JavaScript
+                    task_data = json.loads(request.POST.get('task_data', '[]'))
+                    total_venta = Decimal('0')  # Inicializar total_venta como Decimal
 
-                precio_venta = Decimal(request.POST.get('precio_venta_hidden', '0'))
-                if precio_venta < 0:
-                    raise ValidationError("El precio de venta no puede ser negativo.")
+                    for producto_data in task_data:
+                        producto_id = producto_data['id']
+                        talla_id = producto_data['talla']
+                        cantidad = int(producto_data['cantidad'])
 
-                total_venta = Decimal(cantidad_productos) * precio_venta
-                descuento_porcentaje = form.cleaned_data.get('descuento_porcentaje', 0)
-                descuento_venta = (total_venta * Decimal(descuento_porcentaje)) / 100
+                        producto = Producto.objects.get(cod_producto=producto_id)
+                        talla = producto.idtalla
 
-                if total_venta < 0 or descuento_venta < 0:
-                    raise ValueError("Los valores de total_venta y descuento_venta no son válidos.")
+                        inventario = Inventario.objects.filter(cod_producto=producto, idtalla=talla).first()
+                        if inventario is not None:
+                            inventario.cantidad -= cantidad
+                            inventario.save()
 
-                venta.descuento_venta = descuento_venta
-                venta.total_venta = total_venta - descuento_venta
+                        if producto.precio_venta is not None:  
+                            total_venta += producto.precio_venta * cantidad  # Multiplicar el precio del producto por la cantidad vendida
 
-                # Obtener el producto a partir del código del producto
-                cod_producto = form.cleaned_data['cod_producto']
-                producto = get_object_or_404(Producto, cod_producto=cod_producto)
+                    venta.total_venta = total_venta
+                    venta.save()
 
-                producto.cantidad_productos -= cantidad_productos
-                producto.save()
 
-                venta.save()
-                messages.success(request, "¡Venta registrada exitosamente!")
-            except (ValueError, ValidationError) as e:
-                messages.error(request, f"Error al guardar la venta: {e}")
-        else:
-            messages.error(request, "No hay suficientes productos en el inventario.")
+                    messages.success(request, "¡Venta registrada exitosamente!")
+                    return redirect('Ventas')
+                else:
+                    messages.error(request, "No hay suficientes productos en el inventario.")
+        except (ValidationError, Cliente.DoesNotExist, Producto.DoesNotExist, Inventario.DoesNotExist) as e:
+            messages.error(request, f"Error al guardar la venta: {e}")
     else:
         form = AgregarVentaForm()
 
-    return redirect('Ventas')
+    return render(request, 'ventas.html', {'form': form})
 
 
 
 
+
+
+
+
+
+
+
+
+
+def get_or_create_talla(talla_id):
+    try:
+        talla = Talla.objects.get(pk=talla_id)
+    except Talla.DoesNotExist:
+        talla = Talla.objects.create(pk=talla_id, talla='Talla desconocida')
+    return talla
 
 def get_precio_producto(request, cod_producto):
     producto = get_object_or_404(Producto, cod_producto=cod_producto)
@@ -576,7 +599,29 @@ def get_tallas_disponibles(request, cod_producto):
     data = {'tallas': list(tallas.values('idtalla', 'talla'))}
     return JsonResponse(data)
 
+def actualizar_inventario(request, producto_id, talla_id, cantidad):
+    try:
+        producto = Producto.objects.get(cod_producto=producto_id)
+        tallas = request.POST.getlist('tallas[]')  # Obtener lista de tallas seleccionadas
+        cantidades = request.POST.getlist('cantidades[]')  # Obtener lista de cantidades por talla
 
+        for talla, cantidad in zip(tallas, cantidades):
+            inventario = Inventario.objects.get(producto=producto, talla=talla)
+            inventario.cantidad_productos -= int(cantidad)
+            inventario.save()
+
+        return JsonResponse({'success': True})
+    except (Producto.DoesNotExist, Inventario.DoesNotExist) as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+def calcular_precio_producto(producto_id, cantidad):
+    producto = get_object_or_404(Producto, pk=producto_id)
+    precio_unitario = producto.precio_venta
+    return precio_unitario * int(cantidad)
+
+def calcular_precio(request, producto_id, cantidad):
+    precio = calcular_precio_producto(producto_id, cantidad)
+    return JsonResponse({'precio': precio})
 
 
 
