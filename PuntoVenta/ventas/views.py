@@ -41,7 +41,6 @@ def exit(request):
     logout(request)
     return redirect('login')
 
-
 #--------------------------CLIENTES -----------------------
 @login_required
 def clientes_vista(request):
@@ -113,8 +112,6 @@ def agregar_Cliente_vista(request):
 
     return render(request, 'clientes.html', {'form': form})
 
-
-
 @login_required
 def editar_Cliente_vista(request, cod_cliente):
     cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
@@ -144,11 +141,6 @@ def editar_Cliente_vista(request, cod_cliente):
     }
     
     return render(request, 'editarcliente.html', context)
-
-
-
-
-
 
 @login_required
 def eliminar_Cliente_vista(request):
@@ -307,9 +299,6 @@ def eliminar_Empleado_vista(request):
 
     return redirect('Empleados')
 
-
-
-
 #------------- PRODUCTOS -------------------
 @login_required
 def productos_vista(request):
@@ -346,8 +335,6 @@ def agregar_Producto_vista(request):
         'form': form,
     }
     return render(request, 'productos.html', context)
-
-
 
 @login_required
 def editarProducto(request, cod_producto):
@@ -388,7 +375,6 @@ def eliminar_Producto_vista(request):
                 messages.error(request, "El Producto no existe")
 
     return redirect('Productos')
-
 
 #-------------------- Inventario 
 @login_required
@@ -492,7 +478,6 @@ def eliminar_Inventario_vista(request):
         return redirect('Inventarios')
 
 
-
 #-------------------- VENTAS-------------------
 @login_required
 def ventas_vista(request):
@@ -518,56 +503,83 @@ def ventas_vista(request):
 
     return render(request, 'ventas.html', context)
 
-
-
-
-
-
+@csrf_exempt
 def agregar_Venta_vista(request):
     if request.method == 'POST':
-        try:
-            with transaction.atomic():
-                # Procesar el formulario Django
-                form = AgregarVentaForm(request.POST)
-                if form.is_valid():
-                    cliente = form.cleaned_data['cod_cliente']
-                    venta = form.save(commit=False)
-                    venta.cod_cliente = cliente
+        # Procesar el formulario Django
+        form = AgregarVentaForm(request.POST)
+        
+        if form.is_valid():
+            try:
+                # Obtener los productos del formulario JavaScript
+                task_data = json.loads(request.POST.get('task_data', '[]'))
+                
+                #venta = form.save(commit=False)
+                #venta = Venta()
+                #venta.descuento_venta = descuento_venta
+                #venta.total_venta = total_venta - descuento_venta
 
-                    # Obtener los productos del formulario JavaScript
-                    task_data = json.loads(request.POST.get('task_data', '[]'))
-                    total_venta = Decimal('0')  # Inicializar total_venta como Decimal
+                print
+                for producto_data in task_data:
+                    print("prueba de guardado")
+                    print(producto_data)
+                    
+                    producto_id = producto_data['id']
+                    talla = producto_data['talla']
+                    cantidad = int(producto_data['cantidad'])  
+                    precio = Decimal(producto_data['precio']) 
+                    descuento = int(producto_data['descuento']) 
+                    cod_cliente = int(producto_data['cod_cliente']) 
+                    id_cod_empleado = int(producto_data['id_cod_empleado']) 
+                    
+                    #Validaciones
+                    if cantidad <= 0:
+                        raise ValidationError("La cantidad de productos debe ser un número positivo.")
+                        break
+                    
+                    if precio < 0:
+                        raise ValidationError("El precio de venta no puede ser negativo.")
+                        break
+                    
+                    total_venta = Decimal(cantidad) * precio
+                    descuento_venta = (total_venta * Decimal(descuento)) / 100
 
-                    for producto_data in task_data:
-                        producto_id = producto_data['id']
-                        talla_id = producto_data['talla']
-                        cantidad = int(producto_data['cantidad'])
+                    if total_venta < 0 or descuento_venta < 0:
+                        raise ValueError("Los valores de total_venta y descuento_venta no son válidos.")
+                        break
 
-                        producto = Producto.objects.get(cod_producto=producto_id)
-                        talla = producto.idtalla
 
-                        inventario = Inventario.objects.filter(cod_producto=producto, idtalla=talla).first()
-                        if inventario is not None:
-                            inventario.cantidad -= cantidad
-                            inventario.save()
-
-                        if producto.precio_venta is not None:  
-                            total_venta += producto.precio_venta * cantidad  # Multiplicar el precio del producto por la cantidad vendida
-
-                    venta.total_venta = total_venta
+                     # Restar la cantidad de cada producto
+                    producto = Producto.objects.get(pk=producto_id)
+                    producto.cantidad_productos -= cantidad 
+                    
+                    if producto.cantidad_productos < 0:
+                        raise ValidationError("La cantidad de productos es inexistente.")
+                        break
+                    else:
+                        producto.save()
+                    
+                    # Guardamos la venta
+                    venta = Venta()        
+                    venta.total_venta = total_venta - descuento_venta
+                    venta.precio_venta = precio
+                    venta.descuento_venta = descuento_venta
+                    venta.cantidad_productos = cantidad
+                    venta.cod_cliente = get_object_or_404(Cliente, cod_cliente=cod_cliente)
+                    venta.cod_empleado = get_object_or_404(Empleado, cod_empleado=id_cod_empleado)
+                    venta.cod_producto = get_object_or_404(Producto, cod_producto=producto_id)
                     venta.save()
 
-
-                    messages.success(request, "¡Venta registrada exitosamente!")
-                    return redirect('Ventas')
-                else:
-                    messages.error(request, "No hay suficientes productos en el inventario.")
-        except (ValidationError, Cliente.DoesNotExist, Producto.DoesNotExist, Inventario.DoesNotExist) as e:
-            messages.error(request, f"Error al guardar la venta: {e}")
+                messages.success(request, "¡Venta registrada exitosamente!")
+                return redirect('Ventas')
+            except (ValueError, ValidationError) as e:
+                return JsonResponse({"error": f"Error al guardar la venta: {e}"}, status=400)
+        else:
+            return JsonResponse({"error": "No hay suficientes productos en el inventario."}, status=400)
     else:
         form = AgregarVentaForm()
 
-    return render(request, 'ventas.html', {'form': form})
+    return redirect('Ventas')
 
 
 
@@ -579,14 +591,6 @@ def agregar_Venta_vista(request):
 
 
 
-
-
-def get_or_create_talla(talla_id):
-    try:
-        talla = Talla.objects.get(pk=talla_id)
-    except Talla.DoesNotExist:
-        talla = Talla.objects.create(pk=talla_id, talla='Talla desconocida')
-    return talla
 
 def get_precio_producto(request, cod_producto):
     producto = get_object_or_404(Producto, cod_producto=cod_producto)

@@ -402,8 +402,11 @@ class Venta(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    
+    class Meta:
+        verbose_name = 'venta'
+        verbose_name_plural = 'ventas'
 
+    
 def save(self, *args, **kwargs):
     if self.cod_producto:
         producto = self.cod_producto
@@ -431,6 +434,7 @@ def save(self, *args, **kwargs):
     super(Venta, self).save(*args, **kwargs)
 
 
+  
 
 
 

@@ -20,39 +20,53 @@
                     {% csrf_token %}
                     <!-- Campos del formulario -->
                     {% for field in form_personal %}
-                    <p>{{field.label}} <br>
-                        {{field|add_class:"form-control text-dark"}}</p>
-                    {% for error in field.errors %}
-                    <p class="alarma">{{error}}</p>
-                    {% endfor %}
-                    {% endfor %}
-                
-                    <select id="producto-select" name="cod_producto">
-                        <option value="">Selecciona un producto</option>
-                        {% for producto in producto %}
-                        <option value="{{ producto.cod_producto }}">{{ producto.nombre_producto }}</option>
+                    <div class="form-group">
+                        <label>{{ field.label }}</label>
+                        {{ field|add_class:"form-control text-dark" }}
+                        {% for error in field.errors %}
+                        <p class="alarma">{{ error }}</p>
                         {% endfor %}
-                    </select>
-                    <select id="tallas-select" name="talla">
-                        <option value="">Selecciona una talla</option>
-                        {% for talla in talla %}
-                        <option value="{{ talla.talla }}">{{ talla.talla }}</option>
-                        {% endfor %}
-                    </select>
-                
-                    <input type="number" id="cantidad" name="cantidad_productos" min="1" value="1">
-                    <input type="text" id="precio" name="precio_venta" readonly>
-                    <button type="button" id="agregar-producto">Agregar producto</button>
+                    </div>
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label for="producto-select">Producto</label>
+                        <select id="producto-select" name="cod_producto" class="form-control">
+                            <option value="">Selecciona un producto</option>
+                            {% for producto in producto %}
+                            <option value="{{ producto.cod_producto }}">{{ producto.nombre_producto }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tallas-select">Talla</label>
+                        <select id="tallas-select" name="talla" class="form-control">
+                            <option value="">Selecciona una talla</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" id="cantidad" name="cantidad_productos" min="1" value="1" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio">Precio Venta</label>
+                        <input type="text" id="precio" name="precio_venta" readonly class="form-control">
+                    </div>
+
                     <input type="hidden" id="precio_venta_hidden" name="precio_venta" value="">
                     <input type="hidden" id="precio_venta_total" name="total_venta" value="">
-                    <input type="hidden" id="productos-seleccionados" name="productos_seleccionados">
+                  
                     <input type="hidden" id="productos-seleccionados" name="productos_seleccionados">
                     <input type="hidden" name="task_data" id="task_data_field"> <!-- Agrega este campo oculto -->
-                
-                    <ul id="resumen-venta">
-                        <!-- Aquí se mostrará el resumen de la venta -->
-                    </ul>
-                
+                    <div class="form-group"></div>
+                        <button type="button" class="btn btn-success" id="agregar-producto" >Agregar producto</button>
+                    </div>  
+
+                   
+
                     <div class="modal-footer bg-dark">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">
                             Cancelar
@@ -61,15 +75,16 @@
                             Agregar
                         </button>
                     </div>
+                    <ul id="resumen-venta">
+                        <!-- Aquí se mostrará el resumen de la venta -->
+                    </ul>
+                    
                 </form>
-                
-            
-            
-                
             </div>
         </div>
     </div>
 </div>
+
 
 
 
@@ -189,6 +204,9 @@ document.addEventListener("DOMContentLoaded", function() {
     let cantidadInput = document.getElementById("cantidad");
     let precioInput = document.getElementById("precio");
     let resumenVenta = document.getElementById("resumen-venta");
+    let descuento = document.getElementById("id_descuento_porcentaje");
+    let cod_cliente = document.getElementById("id_cod_cliente");
+    let id_cod_empleado = document.getElementById("id_cod_empleado");
     let form = document.querySelector('form');
 
     let productosSeleccionados = [];
@@ -209,34 +227,37 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById("agregar-producto").addEventListener("click", function() {
-        let producto = productoSelect.options[productoSelect.selectedIndex].text;
-        let talla = tallasSelect.options[tallasSelect.selectedIndex].text;
-        let precio = precioInput.value;
-        let cantidad = cantidadInput.value;
-    
-        let item = document.createElement("li");
-        item.textContent = `Producto: ${producto}, Talla: ${talla}, Precio: ${precio}, Cantidad: ${cantidad}`;
-        resumenVenta.appendChild(item);
-    
-        // Crear un objeto con los datos del producto para enviar al servidor
-        let productoData = {
-            id: productoSelect.value,
-            talla: talla,
-            cantidad: cantidadInput.value,
-            precio: precio // Agregar el precio al objeto productoData
-        };
-    
-        // Agregar el objeto productoData al array productosSeleccionados
-        productosSeleccionados.push(productoData);
-    
-        // Limpiar los campos
-        productoSelect.value = "";
-        tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
-        cantidadInput.value = "";
-        console.log("Productos seleccionados:", productosSeleccionados);
-        populateTaskData()
-    });
-    
+    let producto = productoSelect.options[productoSelect.selectedIndex].text;
+    let talla = tallasSelect.options[tallasSelect.selectedIndex].text;
+    let precio = precioInput.value;
+    let cantidad = cantidadInput.value;
+
+    let item = document.createElement("li");
+    item.textContent = `Producto: ${producto}, Talla: ${talla}, Precio: ${precio}, Cantidad: ${cantidad}`;
+    resumenVenta.appendChild(item);
+
+    // Crear un objeto con los datos del producto para enviar al servidor
+    let productoData = {
+        id: productoSelect.value,
+        talla: talla,
+        cantidad: cantidadInput.value,
+        precio: precio ,// Agregar el precio al objeto productoData
+        descuento: descuento.value,
+        cod_cliente: cod_cliente.value,
+        id_cod_empleado: id_cod_empleado.value
+    };
+
+    // Agregar el objeto productoData al array productosSeleccionados
+    productosSeleccionados.push(productoData);
+
+    // Limpiar los campos
+    productoSelect.value = "";
+    tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
+    cantidadInput.value = "";
+    console.log("Productos seleccionados:", productosSeleccionados);
+    populateTaskData()
+});
+
 
     document.getElementById("producto-select").addEventListener("change", function() {
         let productId = this.value;

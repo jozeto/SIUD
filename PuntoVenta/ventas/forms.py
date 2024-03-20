@@ -149,21 +149,22 @@ class EditarEmpleadoForm(forms.ModelForm):
 #------------------- PRODUCTOS-----------------------------
 
 class AgregarProductoForm(forms.ModelForm):
+    talla = forms.ModelChoiceField(queryset=Talla.objects.all(), empty_label=None, label='Talla Producto')
 
     class Meta:
         model = Producto
-        fields = ['cod_producto', 'nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'imagen', 'idcategoria_producto', 'idtalla'] 
-        labels = {'cod_producto':'Codigo Producto', 'nombre_producto':'Producto', 'precio_venta':'Precio', 'descripcion_producto':'Descripcion', 'cantidad_productos':'Cantidad de Productos',
-                  'imagen':'Imagen', 'idcategoria_producto':'Categoria Producto', 'idtalla':'Talla Prodcuto'}
+        fields = [ 'nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto']
+        labels = { 'nombre_producto': 'Producto', 'precio_venta': 'Precio', 'descripcion_producto': 'Descripcion', 'cantidad_productos': 'Cantidad de Productos',
+                  'idcategoria_producto': 'Categoria Producto'}
 
 
 
 class EditarProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'imagen', 'idcategoria_producto', 'idtalla'] 
+        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto', 'idtalla'] 
         labels = {'nombre_producto':'Producto', 'precio_venta':'Precio', 'descripcion_producto':'Descripción', 'cantidad_productos':'Cantidad de Productos',
-                  'imagen':'Imagen', 'idcategoria_producto':'Categoría Producto', 'idtalla':'Talla Producto'}
+ 'idcategoria_producto':'Categoría Producto', 'idtalla':'Talla Producto'}
 
 
 
