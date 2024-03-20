@@ -554,7 +554,8 @@ def agregar_Venta_vista(request):
                     producto.cantidad_productos -= cantidad 
                     
                     if producto.cantidad_productos < 0:
-                        raise ValidationError("La cantidad de productos es inexistente.")
+                        
+                        messages.error(request, "La cantidad de productos es inexistente.")
                         break
                     else:
                         producto.save()
@@ -575,7 +576,9 @@ def agregar_Venta_vista(request):
             except (ValueError, ValidationError) as e:
                 return JsonResponse({"error": f"Error al guardar la venta: {e}"}, status=400)
         else:
-            return JsonResponse({"error": "No hay suficientes productos en el inventario."}, status=400)
+            
+            messages.error(request, "No hay suficientes productos en el inventario..")
+        
     else:
         form = AgregarVentaForm()
 
