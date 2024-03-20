@@ -152,15 +152,26 @@
         window.location.href = `/editar_Cliente/${cod_cliente}/`;
     }
     </script>
-{% if messages %}
-{% for message in messages %}
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Error...',
-        text: "{{message}}",
-    })
-</script>
-{% endfor %}
-{% endif %}
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error...',
+                    text: "{{ message }}",
+                });
+            </script>
+        {% elif message.tags == 'success' %}
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Cliente Actualizado!',
+                    text: "{{ message }}",
+                });
+            </script>
+            
+        {% endif %}
+    {% endfor %}
+    {% endif %}
 {% endblock %}

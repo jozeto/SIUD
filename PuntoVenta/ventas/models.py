@@ -35,8 +35,8 @@ class Eps(models.Model):
     class Meta: 
         verbose_name = 'EPS'
         verbose_name_plural = 'EPSS'
-def __str__(self):
-        return f"{self.eps}"
+    def __str__(self):
+            return f"{self.eps}"
 
 
 class FondoPension(models.Model):

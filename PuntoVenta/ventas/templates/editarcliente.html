@@ -46,13 +46,24 @@
 
 {% if messages %}
 {% for message in messages %}
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Error...',
-        text: "{{message}}",
-    })
-</script>
+    {% if message.tags == 'error' %}
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error...',
+                text: "{{ message }}",
+            });
+        </script>
+    {% elif message.tags == 'success' %}
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '¡Venta registrada!',
+                text: "{{ message }}",
+            });
+        </script>
+        
+    {% endif %}
 {% endfor %}
 {% endif %}
 {% endblock %}

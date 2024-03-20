@@ -123,7 +123,7 @@ def editar_Cliente_vista(request, cod_cliente):
         if form_cliente.is_valid() and form_persona.is_valid():
             form_cliente.save()
             form_persona.save()
-            messages.success(request, "Cliente guardado exitosamente")
+            messages.success(request, "¡Cliente Actualizado exitosamente!")
             return redirect('Clientes')
     else:
         form_cliente = EditarClienteForm(instance=cliente)
@@ -250,7 +250,7 @@ def agregar_Empleado_vista(request):
                         rh=form.cleaned_data['rh'],
                     )
 
-                messages.success(request, "Cliente guardado exitosamente")
+                messages.success(request, "Cliente guardado ")
 
             except Exception as e:
                 messages.error(request, f"Error al cargar la información: {str(e)}")
@@ -289,11 +289,11 @@ def eliminar_Empleado_vista(request):
                 direccion.delete()
                 empleado.delete()
 
-                messages.success(request, "Cliente eliminado exitosamente")
+                messages.error(request, "Empleado eliminado exitosamente")
             except Cliente.DoesNotExist:
-                messages.error(request, "El cliente no existe")
+                messages.error(request, "El Empleado no existe")
         else:
-            messages.error(request, "No se proporcionó un código de cliente válido")
+            messages.error(request, "No se proporcionó un código del empleado válido")
     else:
         return HttpResponseBadRequest("Solicitud no válida")
 
