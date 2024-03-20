@@ -137,12 +137,13 @@
                         <td>{{i.cod_empleado}}</td>
                         <td>{{i.idinventario}}</td>
                         <td>
-                            <button onclick="editarEmpleado('{{i.iddocumento.documentoidentidad}}', '{{i.iddocumento.primer_nombre}}',
-                             '{{i.iddocumento.segundo_nombre}}', '{{i.iddocumento.primer_apellido}}', '{{i.iddocumento.segundo_apellido}}', '{{i.genero}}','{{i.iddocumento.iddireccion.idciudad.id}}', '{{i.iddocumento.iddireccion.barrio}}',
-                              '{{i.iddocumento.iddireccion.direccion}}', '{{i.iddocumento.idcontacto.telefono}}','{{i.iddocumento.idcontacto.correo}}','{{i.idtipo_comercio.id}}', '{{i.idtipo_cliente.id}}', '{{i.cod_cliente}}', '{{i.cupo_credito}}')"
-                               class="btn btn-dark-outline btn-sm" data-toggle="modal"
-                                href="#EditarPersonalModal"><img src="{% static 'index/img/editar.png' %}" alt="Error"
-                                    width="30"></button>
+                            {% if i.idinventario %}
+                            <form action="/editarNovedadProd/{{ i.idnovedad_producto }}/" method="GET" style="display: inline;">
+                                <button type="submit" class="btn btn-dark-outline btn-sm">
+                                    <img src="{% static 'index/img/editar.png' %}" alt="Error" width="30">
+                                </button>
+                            </form>
+                        {% endif %}
                                     <button onclick="eliminarPersonal('{{i.idnovedad_producto}}')" class="btn btn-dark-outline btn-sm"
                                     data-toggle="modal" href="#EliminarPersonalModal"><img
                                         src="{% static 'index/img/delete.png' %}" alt="Error" width="30"></button>

@@ -53,6 +53,7 @@ urlpatterns = [
        #-------------- COTIZACION --------------------------
    path('novedades_Productos/', views.novedad_Producto_vista, name='novedadesProductos'),
    path('agregar_Novedad_Producto/', views.agregar_Novedad_Producto_vista, name='agregarNovedadProducto'),
+   path('editarNovedadProd/<int:idnovedad_producto>/', views.editarNovedadProducto, name='editarNovedad'),
    
    path('eiminar_Novedad_Producto/', views.eliminar_Novedad_Producto_vista, name='eliminarNovedadProducto'),
    path('get-precio/<str:cod_producto>/', views.get_precio_producto, name='get_precio_producto'),

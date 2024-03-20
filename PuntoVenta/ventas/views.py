@@ -803,6 +803,35 @@ def agregar_Novedad_Producto_vista(request):
                 return redirect('novedadesProductos')
 
     return redirect('novedadesProductos')
+
+@login_required
+def editarNovedadProducto(request, idnovedad_producto):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permiso para editar Inventarios.")
+        return redirect('Inventarios')
+    else:
+    
+    
+
+        novedadVen = get_object_or_404(Novedadproducto, idnovedad_producto=idnovedad_producto)
+
+        if request.method == 'POST':
+            form = EditarNovedadProductoForm(request.POST, instance=novedadVen)
+            if form.is_valid():
+                form.save()
+                return redirect('novedadesProductos')
+        else:
+            form = EditarNovedadProductoForm(instance=novedadVen)
+
+        context = {
+            'form': form,
+            'producto': novedadVen,
+        }
+        return render(request, 'editarNovedad.html', context)
+    
+    
+
+
 @login_required
 def eliminar_Novedad_Producto_vista(request):
     if request.method == 'POST':

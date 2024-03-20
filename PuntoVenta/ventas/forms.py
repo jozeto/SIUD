@@ -284,7 +284,7 @@ class AgregarPqrsForm(forms.ModelForm):
                    'cod_empleado': 'Codigo Empleado', 'cod_cliente':'Cliente', 'idtipopqr':'Tipo Pqrs', 'idestadopqr':'Estado Actual'}
         exclude = ['fecha_cierre']
 
-    #-----------------------PQRS -----------------------------
+    #-----------------------Novedad Producto -----------------------------
 
 class AgregarNovedadProductoForm(forms.ModelForm):
 
@@ -294,4 +294,17 @@ class AgregarNovedadProductoForm(forms.ModelForm):
         fields = ['idnovedad_producto','fecha_novedad','descripcion','cantidad_productos','tiponovedad_producto','cod_producto','cod_empleado','idinventario'] 
         labels = {'idnovedadproducto':'Cod Novedad','fecha_novedad':'Fecha Novedad','cantidad_productos':'Cantidad de Prodcutos','tiponovedad_producto':'tipo de Novedad',
                    'cod_empleado': 'Codigo Empleado', 'descripcion':'Descripcion','cod_producto':'Producto','idinventario':'No. Inventario'}
+class EditarNovedadProductoForm(forms.ModelForm):
+    class Meta:
+        model = Novedadproducto
+        fields = ['fecha_novedad', 'descripcion', 'cantidad_productos', 'tiponovedad_producto', 'cod_producto', 'cod_empleado', 'idinventario']
+        labels = {
+            'fecha_novedad': 'Fecha Novedad',
+            'cantidad_productos': 'Cantidad de Productos',
+            'tiponovedad_producto': 'Tipo de Novedad',
+            'cod_empleado': 'Codigo Empleado',
+            'descripcion': 'Descripcion',
+            'cod_producto': 'Producto',
+            'idinventario': 'No. Inventario'
+        }
 
