@@ -149,22 +149,35 @@ class EditarEmpleadoForm(forms.ModelForm):
 #------------------- PRODUCTOS-----------------------------
 
 class AgregarProductoForm(forms.ModelForm):
-    talla = forms.ModelChoiceField(queryset=Talla.objects.all(), empty_label=None, label='Talla Producto')
-
     class Meta:
         model = Producto
-        fields = [ 'nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto']
-        labels = { 'nombre_producto': 'Producto', 'precio_venta': 'Precio', 'descripcion_producto': 'Descripcion', 'cantidad_productos': 'Cantidad de Productos',
-                  'idcategoria_producto': 'Categoria Producto'}
+        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto', 'idtalla', 'cod_producto']
+        labels = {
+            'nombre_producto': 'Producto',
+            'precio_venta': 'Precio',
+            'descripcion_producto': 'Descripción',
+            'cantidad_productos': 'Cantidad de Productos',
+            'idcategoria_producto': 'Categoría Producto',
+            'idtalla': 'Talla',
+            'cod_producto': 'Codigo Producto'
+        }
+
 
 
 
 class EditarProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto', 'idtalla'] 
-        labels = {'nombre_producto':'Producto', 'precio_venta':'Precio', 'descripcion_producto':'Descripción', 'cantidad_productos':'Cantidad de Productos',
- 'idcategoria_producto':'Categoría Producto', 'idtalla':'Talla Producto'}
+        fields = ['nombre_producto', 'precio_venta', 'descripcion_producto', 'cantidad_productos', 'idcategoria_producto', 'idtalla', 'cod_producto']
+        labels = {
+            'nombre_producto': 'Producto',
+            'precio_venta': 'Precio',
+            'descripcion_producto': 'Descripción',
+            'cantidad_productos': 'Cantidad de Productos',
+            'idcategoria_producto': 'Categoría Producto',
+            'idtalla': 'Talla',
+            'cod_producto': 'Codigo Producto'
+        }
 
 
 
@@ -294,6 +307,9 @@ class AgregarNovedadProductoForm(forms.ModelForm):
         fields = ['idnovedad_producto','fecha_novedad','descripcion','cantidad_productos','tiponovedad_producto','cod_producto','cod_empleado','idinventario'] 
         labels = {'idnovedadproducto':'Cod Novedad','fecha_novedad':'Fecha Novedad','cantidad_productos':'Cantidad de Prodcutos','tiponovedad_producto':'tipo de Novedad',
                    'cod_empleado': 'Codigo Empleado', 'descripcion':'Descripcion','cod_producto':'Producto','idinventario':'No. Inventario'}
+
+
+
 class EditarNovedadProductoForm(forms.ModelForm):
     class Meta:
         model = Novedadproducto

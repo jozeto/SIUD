@@ -5,6 +5,8 @@ from .views import *
 
 urlpatterns = [
     path('home', views.home, name='home'),
+    
+    path('index', views.index, name='index'),
 
 
     #----------- CLIENTES----------------
@@ -59,6 +61,8 @@ urlpatterns = [
    path('get-precio/<str:cod_producto>/', views.get_precio_producto, name='get_precio_producto'),
    path('get-tallas/<str:cod_producto>/', views.get_tallas_disponibles, name='get_tallas_disponibles'),
    path('calcular-precio/<str:producto_id>/<int:cantidad>/', views.calcular_precio, name='calcular_precio'),
+   #-------------------------CONTACTO----------------
+   path('contacto/', views.contacto, name='contacto'),
 
 
 

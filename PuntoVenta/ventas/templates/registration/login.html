@@ -39,7 +39,7 @@ integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xX
                                
                                         </div>
                                         
-                                        <input type="submit" class="btn mt-4" value="Ingresar">
+                                        <input type="submit" class="btn btn-dark animated-button" value="Ingresar">
                                        <!-- <p class="mb-0 mt-4 text-center"><a href="#0" class="link">¿Olvidaste tu contraseña?</a></p>-->
                                       </div>
                                       {% if form.errors %}
@@ -99,7 +99,7 @@ integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xX
                                        
                                                 </div>
                                                 
-                                                <input type="submit" class="btn mt-4" value="Ingresar">
+                                                <input type="submit" class="btn btn-dark animated-button" value="Ingresar">
                                   </div>
                                   {% if form.errors %}
                                         
@@ -161,3 +161,20 @@ integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v
     
 </body>
 </html>
+<style>
+    @keyframes shadow-animation {
+        0% { box-shadow: 5px 5px 0 red, -5px -5px 0 blue, 5px -5px 0 green, -5px 5px 0 yellow; }
+        25% { box-shadow: 5px 5px 0 yellow, -5px -5px 0 red, 5px -5px 0 blue, -5px 5px 0 green; }
+        50% { box-shadow: 5px 5px 0 green, -5px -5px 0 yellow, 5px -5px 0 red, -5px 5px 0 blue; }
+        75% { box-shadow: 5px 5px 0 blue, -5px -5px 0 green, 5px -5px 0 yellow, -5px 5px 0 red; }
+        100% { box-shadow: 5px 5px 0 red, -5px -5px 0 blue, 5px -5px 0 green, -5px 5px 0 yellow; }
+    }
+
+    .animated-button {
+        animation: shadow-animation 5s infinite;
+    }
+    .btn-dark animated-button {
+        font-size: 1.5em; /* Aumenta el tamaño del texto */
+        padding: 10px 20px; /* Ajusta el padding para aumentar el tamaño del botón */
+      }
+</style>

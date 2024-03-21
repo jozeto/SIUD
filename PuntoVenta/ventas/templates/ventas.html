@@ -34,17 +34,12 @@
                         <select id="producto-select" name="cod_producto" class="form-control">
                             <option value="">Selecciona un producto</option>
                             {% for producto in producto %}
-                            <option value="{{ producto.cod_producto }}">{{ producto.nombre_producto }}</option>
+                            <option value="{{ producto.cod_producto }}"> {{ producto.idcategoria_producto }}, Talla {{ producto.idtalla.talla }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="tallas-select">Talla</label>
-                        <select id="tallas-select" name="talla" class="form-control">
-                            <option value="">Selecciona una talla</option>
-                        </select>
-                    </div>
+                    
 
                     <div class="form-group">
                         <label for="cantidad">Cantidad</label>
@@ -154,7 +149,7 @@
                         <td>{{forloop.counter}}</td>
                         <td>{{i.idventa}}</td>
                         <td>{{i.fecha_venta}}</td>
-                        <td>{{i.cod_producto.nombre_producto}}</td>
+                        <td>{{i.cod_producto.idcategoria_producto }}, Talla {{ i.cod_producto.idtalla.talla }}</td>
                         <td>{{i.cantidad_productos}}</td>
                         <td>{{i.descuento_venta}}</td>
                         <td>{{i.precio_venta}}</td>
@@ -206,7 +201,6 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     let productoSelect = document.getElementById("producto-select");
-    let tallasSelect = document.getElementById("tallas-select");
     let cantidadInput = document.getElementById("cantidad");
     let precioInput = document.getElementById("precio");
     let resumenVenta = document.getElementById("resumen-venta");
@@ -217,35 +211,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let productosSeleccionados = [];
 
-    productoSelect.addEventListener("change", function() {
-        let codProducto = this.value;
-        fetch(`/get-tallas/${codProducto}/`)
-            .then(response => response.json())
-            .then(data => {
-                tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
-                data.tallas.forEach(talla => {
-                    let option = document.createElement("option");
-                    option.value = talla.id;
-                    option.text = talla.talla;
-                    tallasSelect.appendChild(option);
-                });
-            });
-    });
+    
 
     document.getElementById("agregar-producto").addEventListener("click", function() {
     let producto = productoSelect.options[productoSelect.selectedIndex].text;
-    let talla = tallasSelect.options[tallasSelect.selectedIndex].text;
+
     let precio = precioInput.value;
     let cantidad = cantidadInput.value;
 
     let item = document.createElement("li");
-    item.textContent = `Producto: ${producto}, Talla: ${talla}, Precio: ${precio}, Cantidad: ${cantidad}`;
+    item.textContent = `Producto: ${producto}, Precio: ${precio}, Cantidad: ${cantidad}`;
     resumenVenta.appendChild(item);
 
     // Crear un objeto con los datos del producto para enviar al servidor
     let productoData = {
         id: productoSelect.value,
-        talla: talla,
+        
         cantidad: cantidadInput.value,
         precio: precio ,// Agregar el precio al objeto productoData
         descuento: descuento.value,
@@ -258,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Limpiar los campos
     productoSelect.value = "";
-    tallasSelect.innerHTML = '<option value="">Selecciona una talla</option>';
+
     cantidadInput.value = "";
     console.log("Productos seleccionados:", productosSeleccionados);
     populateTaskData()

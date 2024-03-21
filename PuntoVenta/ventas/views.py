@@ -20,6 +20,8 @@ from django.utils import timezone
 from django.forms import formset_factory
 from pprint import pprint
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.conf import settings
 # Create your views here.
 """
 def ventas_vista(request):
@@ -33,13 +35,17 @@ def ventas_vista(request):
 def home(request):
     return render(request,"home.html")
 
+def index(request):
+    return render(request,"index.html")
+
+
 @login_required
 def login(request):
     return(render(request,'registration/login.html' ))
     
 def exit(request):
     logout(request)
-    return redirect('login')
+    return redirect('index')
 
 #--------------------------CLIENTES -----------------------
 @login_required
@@ -334,7 +340,7 @@ def agregar_Producto_vista(request):
     context = {
         'form': form,
     }
-    return render(request, 'productos.html', context)
+    return redirect('Productos')
 
 @login_required
 def editarProducto(request, cod_producto):
@@ -525,7 +531,7 @@ def agregar_Venta_vista(request):
                     print(producto_data)
                     
                     producto_id = producto_data['id']
-                    talla = producto_data['talla']
+                   
                     cantidad = int(producto_data['cantidad'])  
                     precio = Decimal(producto_data['precio']) 
                     descuento = int(producto_data['descuento']) 
@@ -797,10 +803,26 @@ def agregar_Novedad_Producto_vista(request):
         form = AgregarNovedadProductoForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                form.save()
-            except:
-                messages(request,"error al registrar Novedad")
-                return redirect('novedadesProductos')
+                novedad = form.save()
+
+                # Enviar correo electrónico con los detalles de la novedad
+                subject = 'Nueva novedad de producto'
+                message = f'Se ha registrado una nueva novedad de producto:\n\n' \
+                          f'Empleado: {novedad.cod_empleado}\n' \
+                          f'Tipo de novedad: {novedad.tiponovedad_producto}\n' \
+                          f'Descripción: {novedad.descripcion}\n' \
+                          f'Fecha: {novedad.fecha_novedad}\n'
+                send_mail(
+                    subject,
+                    message,
+                    settings.EMAIL_HOST_USER,
+                    ['sebastiansalgado404@gmail.com'],
+                    fail_silently=False,
+                )
+
+                messages.success(request, 'Se ha registrado la novedad correctamente')
+            except Exception as e:
+                messages.error(request, f'Error al registrar la novedad: {e}')
 
     return redirect('novedadesProductos')
 
@@ -834,6 +856,8 @@ def editarNovedadProducto(request, idnovedad_producto):
 
 @login_required
 def eliminar_Novedad_Producto_vista(request):
+    
+    
     if request.method == 'POST':
         id_personal_eliminar = request.POST.get('id_personal_eliminar')
         if id_personal_eliminar:
@@ -846,3 +870,28 @@ def eliminar_Novedad_Producto_vista(request):
                 messages.error(request, "La PQRS no existe")
 
     return redirect('novedadesProductos')
+
+
+@login_required
+def contacto(request):
+    
+    if not request.user.is_staff:
+        # Redirigir a otra página o mostrar un mensaje de error
+        return render(request,"home.html")
+    if request.method == "POST":
+        message = request.POST['message']
+        email = request.POST['email']
+        name = request.POST['name']
+        
+        recipient_list = ['sebastiansalgado404@gmail.com']
+        send_mail(
+            'UP DENIM',  # Asunto del correo
+            message,  # Cuerpo del correo
+            settings.EMAIL_HOST_USER,  # Email del remitente
+            [email],  # Lista de destinatarios
+            fail_silently=False,
+        )
+        
+        messages.success(request, 'Se ha enviado el correo')
+        
+    return render(request, 'contacto.html')

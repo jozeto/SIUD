@@ -1,0 +1,40 @@
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+
+
+<style>
+    @keyframes shadow-animation {
+        0% { box-shadow: 5px 5px 0 red, -5px -5px 0 blue, 5px -5px 0 green, -5px 5px 0 yellow; }
+        25% { box-shadow: 5px 5px 0 yellow, -5px -5px 0 red, 5px -5px 0 blue, -5px 5px 0 green; }
+        50% { box-shadow: 5px 5px 0 green, -5px -5px 0 yellow, 5px -5px 0 red, -5px 5px 0 blue; }
+        75% { box-shadow: 5px 5px 0 blue, -5px -5px 0 green, 5px -5px 0 yellow, -5px 5px 0 red; }
+        100% { box-shadow: 5px 5px 0 red, -5px -5px 0 blue, 5px -5px 0 green, -5px 5px 0 yellow; }
+    }
+
+    .animated-button {
+        animation: shadow-animation 5s infinite;
+    }
+    .btn-dark animated-button {
+        font-size: 1.5em; /* Aumenta el tamaño del texto */
+        padding: 10px 20px; /* Ajusta el padding para aumentar el tamaño del botón */
+      }
+</style>
+
+<div class="d-flex justify-content-end col-md-10" style="position: relative;">
+    <a href="{% url 'login' %}" class="btn btn-dark animated-button" style="padding: 15px 25px; font-size: 1em; width: calc(20% + 20px); position: absolute; top: 400px; right: -30px; z-index: 1; background-color: #333; box-shadow: 5px 5px 0 red, -5px -5px 0 blue, 5px -5px 0 green, -5px 5px 0 yellow;">Iniciar sesión</a>
+</div>
+
+
+
+
+
+<div>
+<img src="{% static 'index/img/UPIMG.png'  %}" style="width: 800px; height: 790px; display: inline-block; vertical-align: middle; margin-right: 10px;">
+</div>
+
+
+
+{% endblock %}
