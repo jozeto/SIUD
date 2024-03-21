@@ -9,6 +9,7 @@ class RolUsuario(models.Model):
     nombre_rol = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta:
+        app_label = 'ventas'
         verbose_name = 'roldeusuario'
         verbose_name_plural = 'rolesusuario'
     def __str__(self):
@@ -21,6 +22,8 @@ class Arl(models.Model):
     arl = models.CharField(max_length=45, unique=True, blank=False, null=False)
 
     class Meta:
+        
+        app_label = 'ventas'
         verbose_name = 'ARL'
         verbose_name_plural = 'ARLS'
     def __str__(self):
@@ -33,6 +36,7 @@ class Eps(models.Model):
     eps = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'EPS'
         verbose_name_plural = 'EPSS'
     def __str__(self):
@@ -44,6 +48,7 @@ class FondoPension(models.Model):
     fondo_pension = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'fondopension'
         verbose_name_plural = 'fondospension'
     def __str__(self):
@@ -55,6 +60,7 @@ class CargoEmpleado(models.Model):
     cargo_empleado = models.CharField(max_length=45, unique=True, blank=False, null=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'cargoempleado'
         verbose_name_plural = 'cargosempleados'
     def __str__(self):
@@ -66,6 +72,7 @@ class CategoriaProducto(models.Model):
     categoria_producto = models.CharField(max_length=45, unique=True, blank=False, null=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'categoriaproducto'
         verbose_name_plural = 'categoriasproducto'
     def __str__(self):
@@ -78,6 +85,7 @@ class Ciudad(models.Model):
     ciudad = models.CharField(max_length=45, blank=False, null=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'Ciudad'
         verbose_name_plural = 'Ciudades'
     def __str__(self):
@@ -90,6 +98,7 @@ class TipoCliente(models.Model):
     tipo_cliente = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'tipocliente'
         verbose_name_plural = 'tiposcliente'
     def __str__(self):
@@ -102,6 +111,7 @@ class TipoComercio(models.Model):
     tipo_comercio = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'tipocomercio'
         verbose_name_plural = 'tiposcomercio'
     def __str__(self):
@@ -113,6 +123,7 @@ class EstadoComprobante(models.Model):
     estado_comprobante = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'estadocomprobante'
         verbose_name_plural = 'estadoscomprobante'
     def __str__(self):
@@ -124,6 +135,7 @@ class EstadoPQR(models.Model):
     estado_pqr = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'estadopqr'
         verbose_name_plural = 'estadospqr'
     def __str__(self):
@@ -136,6 +148,7 @@ class FormaPago(models.Model):
     forma_pago = models.CharField(max_length=45, unique=True, blank=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'formapago'
         verbose_name_plural = 'formapago'
     def __str__(self):
@@ -148,6 +161,7 @@ class Tipomovimiento(models.Model):
     tipo_movimiento = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'tipomovimiento'
         verbose_name_plural = 'tiposmovimiento'
     def __str__(self):
@@ -159,6 +173,7 @@ class Tiponovedadpersonal(models.Model):
     novedad_personal = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'tiponovedadpersonal'
         verbose_name_plural = 'tiposnovedadpersonal'
     def __str__(self):
@@ -171,6 +186,7 @@ class Tiponovedadproducto(models.Model):
     novedad_producto = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'Tiponovedadproducto'
         verbose_name_plural = 'Tiposnovedadproducto'
     def __str__(self):
@@ -182,6 +198,7 @@ class TipoPQR(models.Model):
     tipo_pqr = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'Tipopqr'
         verbose_name_plural = 'Tipospqr'
     def __str__(self):
@@ -194,6 +211,7 @@ class Ubicacioninventario(models.Model):
     ubicacion_inventario = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'ubicacioninventario'
         verbose_name_plural = 'ubicacionesnventario'
     def __str__(self):
@@ -205,6 +223,7 @@ class Talla(models.Model):
     talla = models.CharField(max_length=45, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'talla'
         verbose_name_plural = 'tallas'
     def __str__(self):
@@ -217,6 +236,7 @@ class Contacto(models.Model):
     correo = models.EmailField(max_length=60, unique=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'contacto'
         verbose_name_plural = 'contactos'
     def __str__(self):
@@ -231,6 +251,7 @@ class Direccion(models.Model):
     idciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'direccion'
         verbose_name_plural = 'direcciones'
     def __str__(self):
@@ -244,6 +265,7 @@ class Usuarioid(models.Model):
     contrasena = models.CharField(max_length=25, blank=False, null=False)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'usuarioID'
         verbose_name_plural = 'usuariosID'
     def __str__(self):
@@ -264,6 +286,7 @@ class Persona(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'persona'
         verbose_name_plural = 'personas'
     def __str__(self):
@@ -280,6 +303,7 @@ class Cliente(models.Model):
     updated = models.DateTimeField(auto_now_add=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'cliente'
         verbose_name_plural = 'clientes'
     def __str__(self):
@@ -305,6 +329,7 @@ class Empleado(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'empleado'
         verbose_name_plural = 'empleados'
     def __str__(self):
@@ -324,6 +349,7 @@ class Producto(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'producto'
         verbose_name_plural = 'productos'
     def __str__(self):
@@ -342,6 +368,7 @@ class Novedadpersonal(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'novedadpersonal'
         verbose_name_plural = 'novedadespersonal'
     def __str__(self):
@@ -362,6 +389,7 @@ class Pqr(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'PQR'
         verbose_name_plural = 'PQRS'
     def __str__(self):
@@ -380,6 +408,7 @@ class Cotizacion(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'cotizacion'
         verbose_name_plural = 'cotizaciones'
     def __str__(self):
@@ -403,6 +432,7 @@ class Venta(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'ventas'
         verbose_name = 'venta'
         verbose_name_plural = 'ventas'
 
@@ -451,6 +481,7 @@ class Inventario(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'inventario'
         verbose_name_plural = 'inventarios'
     def __str__(self):
@@ -467,6 +498,7 @@ class Comprobanteventa(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'compobanteventa'
         verbose_name_plural = 'comprobantesventa'
     def __str__(self):
@@ -486,6 +518,7 @@ class Novedadproducto(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta: 
+        app_label = 'ventas'
         verbose_name = 'novedadproducto'
         verbose_name_plural = 'novedadesproducto'
     def __str__(self):

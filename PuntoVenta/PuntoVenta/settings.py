@@ -14,7 +14,8 @@ from pathlib import Path
 import os
 from django.core.wsgi import get_wsgi_application
 import dj_database_url
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'PuntoVenta.settings')
+
+
 
 application = get_wsgi_application()
 
@@ -46,8 +47,8 @@ LOGOUT_REDIRECT_URL= 'index/'
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admin',  # Esta línea agrega la aplicación de administración
     'django.contrib.contenttypes',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
 ]
+
 
 
 
