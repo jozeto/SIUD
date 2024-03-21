@@ -133,37 +133,8 @@ function activarEspera(){
   btn.disabled = true;
 }
 
-$(document).ready(function () {
+// Verificar si la tabla ya ha sido inicializada antes de intentar inicializarla nuevamente
 
-  $('#myTable').DataTable({
-    "language": {
-      "url": "../static/index/js/idiom.json"},
-    "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-    dom: 'Bfrtip',
-    buttons: [
-      { extend: 'csv' },
-      { extend: 'print'},
-    ]
-  });
-  $('#table2').DataTable({
-    "language": {
-      "url": "../static/index/js/idiom.json"},
-    "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-    dom: 'Bfrtip',
-    buttons: [
-      { extend: 'csv' },
-      { extend: 'print'},
-    ]
-  });
-  $('#table3').DataTable({
-    "language": {
-      "url": "../static/index/js/idiom.json"},
-    "lengthMenu": [[10, 25, 50], [10, 25, 50]],
-    dom: 'Bfrtip',
-    buttons: [
-      { extend: 'csv' },
-      { extend: 'print'},
-    ]
-  });
-});
+ 
+
  
