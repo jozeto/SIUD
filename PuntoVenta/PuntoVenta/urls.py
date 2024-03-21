@@ -22,11 +22,11 @@ from ventas.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('ventas.urls')),
+    path('accounts/',include('django.contrib.auth.urls')),
+    path('',index),
     path('logout/', exit, name='exit'),
-    path('', index),
     #path('clientes/', include('clientes.urls')),
 ]
-
 
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
