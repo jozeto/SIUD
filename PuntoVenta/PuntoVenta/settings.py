@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'PuntoVenta.ventas.apps.VentasConfig',
+    'ventas',
     'widget_tweaks',
     "crispy_forms",
     "crispy_bootstrap5",
