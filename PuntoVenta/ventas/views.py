@@ -425,6 +425,7 @@ def agregar_Inventario_vista(request):
                     # Sumar la cantidad de productos del inventario al total de productos del modelo Producto
                     producto.cantidad_productos += inventario.cantidad_productos
                     producto.save()
+                    messages.success(request, "¡Inventario registrado exitosamente!")
 
                     # Redireccionar a la página de inventarios
                     return redirect('Inventarios')
@@ -647,6 +648,7 @@ def editarVenta(request, idventa):
         form = EditarVentaForm(request.POST, instance=venta)
         if form.is_valid():
             form.save()
+            messages.success(request, "¡Venta actualizada exitosamente!")
             return redirect('agregarVenta')  # Reemplaza 'Clientes' con el nombre de la URL a la que quieres redirigir
     else:
         # Aquí asegúrate de que la instancia de la venta tenga la fecha de venta correcta
@@ -669,6 +671,7 @@ def eliminar_Venta_vista(request):
             if id_personal_eliminar:
                 try:
                     venta = Venta.objects.get(pk=id_personal_eliminar)
+                    messages.error(request, "Venta eliminada exitosamente")
 
                     venta.delete() 
 

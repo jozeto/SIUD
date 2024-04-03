@@ -34,7 +34,7 @@
                         <select id="producto-select" name="cod_producto" class="form-control">
                             <option value="">Selecciona un producto</option>
                             {% for producto in producto %}
-                            <option value="{{ producto.cod_producto }}"> {{ producto.idcategoria_producto }}, Talla {{ producto.idtalla.talla }}</option>
+                            <option value="{{ producto.cod_producto }}"> {{ producto.idcategoria_producto }},{{ producto.descripcion_producto }}, Talla {{ producto.idtalla.talla }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -149,7 +149,7 @@
                         <td>{{forloop.counter}}</td>
                         <td>{{i.idventa}}</td>
                         <td>{{i.fecha_venta}}</td>
-                        <td>{{i.cod_producto.idcategoria_producto }}, Talla {{ i.cod_producto.idtalla.talla }}</td>
+                        <td>{{i.cod_producto.idcategoria_producto }} {{ i.cod_producto.descripcion_producto }}, Talla {{ i.cod_producto.idtalla.talla }}</td>
                         <td>{{i.cantidad_productos}}</td>
                         <td>{{i.descuento_venta}}</td>
                         <td>{{i.precio_venta}}</td>

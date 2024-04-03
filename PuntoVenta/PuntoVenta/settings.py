@@ -29,12 +29,9 @@ DEBUG = 'RENDER' not in os.environ
 
 
 
-ALLOWED_HOSTS = []
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:    
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-LOGIN_REDIRECT_URL= '/home'
-LOGOUT_REDIRECT_URL= 'index/'
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = ['https://89a0-2803-1800-1323-fb2c-856-c2fd-6cb3-2a54.ngrok-free.app']
 
 
 
@@ -143,6 +140,10 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+    
+LOGIN_REDIRECT_URL= '/home'
+LOGOUT_REDIRECT_URL= 'index/'
 
 # Imagenes o recursos
 MEDIA_URL = '/media/'
